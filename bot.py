@@ -4,7 +4,7 @@ from utils.commandMaker import CommandMaker
 import os
 from setup import token
 
-prefix = "cm/"
+prefix = "cm."
 bot = commands.Bot(command_prefix=prefix)
 
 game = discord.Game(name=f'{prefix}help')
