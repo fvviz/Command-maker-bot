@@ -108,14 +108,11 @@ class Help(commands.Cog, name="Help"):
  
 **:pencil: __Usage__**
 To make your own commands, 
-Use command `{prefix}make <command-name-here>`
+Use command `{prefix}make <command-name-here> <content>`
 
-**Example** : `{prefix}make hi`
+**Example** : `{prefix}make hi hi`
 This should make a command called 'hi'
-once you do this , the bot will then ask you to type out content.
-Type that out and boom your command is created !
-
-
+now you can use `{prefix}hi` anytime and the bot will respond hi
 
                         """
                 embed = discord.Embed(

@@ -2,6 +2,8 @@ from discord.ext import commands
 from utils.commandMaker import *
 import asyncio
 import platform
+from discord.ext.commands.cooldowns import BucketType
+import datetime
 
 class Utility(commands.Cog):
 
@@ -9,7 +11,10 @@ class Utility(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases = ["makecmd"])
-    async def make(self,ctx,name):
+    @commands.cooldown(3,3600,BucketType.member)
+    async def make(self,ctx,name,*,content):
+
+        print("works")
 
         guild = ctx.guild
 
@@ -29,17 +34,23 @@ class Utility(commands.Cog):
 
             await asyncio.sleep(2)
             await msg.edit(content = f"<:greenTick:596576670815879169> | command **{name}** available ")
+            msg2 = await ctx.send(f"<a:loading:718075868345532466> | creating command **{name}**")
 
-            await ctx.send("Now , please type out the output of the command, **You have 20 seconds**")
+            commandMaker.create_command(name,ctx.author,content)
+            await asyncio.sleep(2)
+            await msg2.edit(content = "<:greenTick:596576670815879169>  | command created ")
+            print("works") 
 
-            def check(message):
-                return message.author == ctx.author and message.channel == ctx.channel
 
-            content = await self.bot.wait_for("message",check = check)
+    @make.error
+    async def make_error(self,ctx,error):
 
-            commandMaker.create_command(name,ctx.author,content.content)
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(f":x: | Only 3 commands can be made in an hour. **Try again in {str(datetime.timedelta(seconds = error.retry_after))[2:4]} minutes**")
 
-            await ctx.send("<:greenTick:596576670815879169>  | command created ")
+
+
+
 
 
     @commands.command(aliases = ["deletecmd","remove"])
