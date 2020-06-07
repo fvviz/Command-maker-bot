@@ -73,6 +73,18 @@ class CommandMaker():
         else:
             return False
 
+
+    def get_command_author_id(self,name):
+        df = self.df
+
+        if name in df.name.values:
+            cmdRow = df[df.name == name]
+            authorid = cmdRow.authorID.values[0]
+            return authorid
+        else:
+            return None
+
+
     def show_commands(self):
 
         df = self.df

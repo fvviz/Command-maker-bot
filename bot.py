@@ -18,6 +18,7 @@ def launchBot(bot : commands.bot):
     bot.load_extension("cogs.utility")
     bot.remove_command("help")
     bot.load_extension("cogs.help")
+    bot.load_extension('jishaku')
     bot.run(token)
 
 @bot.event
@@ -56,15 +57,10 @@ now you can use `{prefix}hi` anytime and the bot will respond `hi`
     await logchannel.send(f"<a:sufisheep:718395610549452901> The bot has been added to **{guild.name}** , We've reached our **{len(bot.guilds)}th** server! <a:sufisheep:718395610549452901>")
 
 
-
 @bot.event
 async def on_command_error(ctx,error):
 
-    #if isinstance(error,commands.MissingRequiredArgument):
-        #await ctx.send(f"❌| **{error}** \n__for more help on that command,use__ **rt help {ctx.command.name}**")
 
-    #elif isinstance(error,commands.BotMissingPermissions):
-        #await ctx.send("❌| **I'm missing permissions to execute that command**")
 
     if isinstance(error,commands.CommandNotFound):
 
@@ -80,13 +76,9 @@ async def on_command_error(ctx,error):
             await ctx.send(f"❌| **command does not exist**")
 
 
-
-
-
     else:
         pass
-        #await ctx.send(f"❌| **{error}**")
-        
+
 
 
 launchBot(bot)

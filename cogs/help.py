@@ -88,8 +88,8 @@ class Help(commands.Cog, name="Help"):
                         elif name == "Utility":
                             cats.append(f"🛠️ **{name}**")
 
-                        elif name == "reddit":
-                            cats.append(f"<:reddit:711990234736361566> **{name}**")
+                        elif name == "jishaku":
+                            cats.append(f"jisaku")
 
 
                         #desc += "**__" + name + "__** \n"
@@ -135,7 +135,7 @@ now you can use `{prefix}hi` anytime and the bot will respond hi
 
 
 
-                    for command in cmList:
+                    for command in cmList[:3]:
                         custCommands += f"`{command}` "
 
                     if len(cmList)!= 0:

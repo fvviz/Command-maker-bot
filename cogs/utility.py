@@ -4,6 +4,7 @@ import asyncio
 import platform
 from discord.ext.commands.cooldowns import BucketType
 import datetime
+import os
 
 class Utility(commands.Cog):
 
@@ -14,7 +15,7 @@ class Utility(commands.Cog):
     @commands.cooldown(3,3600,BucketType.member)
     async def make(self,ctx,name,*,content):
 
-        print("works")
+
 
         guild = ctx.guild
 
@@ -32,14 +33,39 @@ class Utility(commands.Cog):
 
         else:
 
-            await asyncio.sleep(2)
-            await msg.edit(content = f"<:greenTick:596576670815879169> | command **{name}** available ")
-            msg2 = await ctx.send(f"<a:loading:718075868345532466> | creating command **{name}**")
+               if len(name) < 12:
+                   if name.startswith("@") or name.startswith("<"):
+                       await msg.edit(":x: | command names cant start with `@` or `<`")
+                   else:
 
-            commandMaker.create_command(name,ctx.author,content)
-            await asyncio.sleep(2)
-            await msg2.edit(content = "<:greenTick:596576670815879169>  | command created ")
-            print("works") 
+                       await asyncio.sleep(2)
+                       await msg.edit(content = f"<:greenTick:596576670815879169> | command **{name}** available ")
+                       msg2 = await ctx.send(f"<a:loading:718075868345532466> | creating command **{name}**")
+
+
+                       commandMaker.create_command(name,ctx.author,await commands.clean_content().convert(ctx,content))
+
+                       await asyncio.sleep(2)
+
+                       await msg2.edit(content = "<:greenTick:596576670815879169>  | command created ")
+
+
+               else:
+                    await msg.edit(content = f"{ctx.author.mention} bruh dat command name be af long doe , try making it shorter maybe?")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @make.error
@@ -49,8 +75,62 @@ class Utility(commands.Cog):
             await ctx.send(f":x: | Only 3 commands can be made in an hour. **Try again in {str(datetime.timedelta(seconds = error.retry_after))[2:4]} minutes**")
 
 
+        if isinstance(error,commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
 
 
+
+    @commands.command()
+    async def clean(self,ctx,arg):
+
+        await ctx.send(await commands.clean_content().convert(ctx,arg))
+
+    @commands.command(aliases = ["commmandauthor"])
+    async def commandinfo(self,ctx,command):
+
+        guild = ctx.guild
+
+        try:
+            commandMaker = CommandMaker(guild,self.bot)
+
+            authorID = commandMaker.get_command_author_id(command)
+
+            author = guild.get_member(int(authorID))
+
+            embed =  discord.Embed(title=f"{command} command",color=0x36393E)
+            embed.set_author(name = author,icon_url=author.avatar_url)
+
+            await ctx.send(embed = embed)
+        except:
+            await ctx.send("command does not exist?")
+
+
+
+
+    async def has_perms(ctx):
+
+        if ctx.author.id == 247292930346319872:
+            return True
+        elif ctx.author.guild_permissions.administrator:
+            return True
+
+        else:
+            return False
+
+    @commands.command(aliases = ["resetcmds","nukeall"])
+    @commands.check(has_perms)
+    async def nukecommands(self,ctx):
+        msg = await ctx.send(f"<a:loading:718075868345532466> | nuking **{ctx.guild.name}** custom commands")
+        os.remove(f"data/{ctx.guild.id}.csv")
+        await asyncio.sleep(2)
+        await msg.edit(content = f"<:greenTick:596576670815879169> | nuked")
+
+
+    @nukecommands.error
+    async def nukecommands_error(self,ctx,error):
+
+        if isinstance(error,commands.CheckFailure):
+            await ctx.send("you require `administrator` permissions to execute that command")
 
 
     @commands.command(aliases = ["deletecmd","remove"])
