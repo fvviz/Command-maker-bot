@@ -79,12 +79,6 @@ class Utility(commands.Cog):
             await ctx.send(f"bruh you aint even specifying {error.param}")
 
 
-
-    @commands.command()
-    async def clean(self,ctx,arg):
-
-        await ctx.send(await commands.clean_content().convert(ctx,arg))
-
     @commands.command(aliases = ["commmandauthor"])
     async def commandinfo(self,ctx,command):
 
