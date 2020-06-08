@@ -18,7 +18,6 @@ def launchBot(bot : commands.bot):
     bot.load_extension("cogs.utility")
     bot.remove_command("help")
     bot.load_extension("cogs.help")
-    bot.load_extension('jishaku')
     bot.run(token)
 
 @bot.event
@@ -65,21 +64,25 @@ async def on_command_error(ctx,error):
     if isinstance(error,commands.CommandNotFound):
 
         try:
-            commandMaker = CommandMaker(ctx.guild,bot)
-            print(ctx.message.content)
-
-            output = commandMaker.run_command(name=ctx.message.content[len(prefix):])
-            await ctx.send(output)
+            print("command name" , ctx.invoked_with)
+            try:
+                commandMaker = CommandMaker("text",ctx.guild,bot)
+                output = commandMaker.run_text_command(name=ctx.invoked_with)
+                await ctx.send(output)
+            except:
+                commandMaker = CommandMaker("choice", ctx.guild, bot)
+                print(ctx.command)
+                output = commandMaker.run_choice_command(name=ctx.invoked_with)
+                
+                await ctx.send(output)
 
         except:
 
-            await ctx.send(f"❌| **command does not exist**")
+            await ctx.send(f"{error}")
 
 
     else:
         pass
 
 
-
 launchBot(bot)
-

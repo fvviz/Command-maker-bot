@@ -1,35 +1,69 @@
 import pandas as pd
 import discord
 from discord.ext import commands
+import random
+
+
+def make_csv(guild,type):
 
 
 
-def make_csv(guild):
-    df = pd.DataFrame(columns=['name', 'content', 'authorID'])
-    df.to_csv(f"data/{guild.id}.csv",index=False)
+    if type == "text":
+        df = pd.DataFrame(columns=['name', 'content', 'authorID'])
+        df.to_csv(f"data/{type}/{guild}.csv", index=False)
+
+    elif type == "choice":
+        df = pd.DataFrame(columns=['name', 'choices', 'authorID'])
+        df.to_csv(f"data/{type}/{guild}.csv", index=False)
+
+    elif type == "embed":
+        pass
+
+    else:
+        raise Exception("Type has to be either text, choice or embed")
+
+def get_csv(guild,type):
+
+        try:
+            pd.read_csv(f"data/{type}/{guild}.csv")
+        except:
+            make_csv(guild,type)
+
+        df = pd.read_csv(f"data/{type}/{guild}.csv")
+        return df
+
+
+
+
 
 
 class CommandMaker():
 
-    def __init__(self,guild :discord.Guild,bot):
+    def __init__(self,type,guild :discord.Guild,bot):
         self.guildname = guild.id
 
         try:
-           pd.read_csv(f"data/{self.guildname}.csv")
+           pd.read_csv(f"data/{type}/{self.guildname}.csv")
 
-        except:
-           make_csv(guild)
+        except FileNotFoundError:
+           make_csv(self.guildname,type)
+            
+        self.text_df = get_csv(self.guildname,"text")
+        self.choice_df = get_csv(self.guildname,"choice")
 
-        self.df =  pd.read_csv(f"data/{self.guildname}.csv")
+        self.text_commands = self.text_df.name.tolist()
+        self.choice_commands = self.choice_df.name.tolist()
 
+
+        self.type  = type
+        self.df =  pd.read_csv(f"data/{type}/{self.guildname}.csv")
         self.bot = bot
 
-        commandlist = self.df.name.tolist()
 
+
+        commandlist = self.text_commands + self.choice_commands
         self.commandlist = commandlist
-
         self.commands = ""
-
         for command in commandlist:
             self.commands += f"`{command}"
 
@@ -43,22 +77,26 @@ class CommandMaker():
 
 
     def save(self):
-        self.df.to_csv(f"data/{self.guildname}.csv" , index=False)
+        type = self.type
+        self.df.to_csv(f"data/{type}/{self.guildname}.csv" , index=False)
+
 
     def does_command_exist(self,name):
 
-        df = self.df
-
-        if name in df.name.values:
-            return True
+        textdf = get_csv(self.guildname,"text")
+        choicedf = get_csv(self.guildname,"choice")
 
         botcommands = []
         for command in self.bot.commands:
             botcommands.append(command.name)
 
+        if name in textdf.name.values:
+            return True
 
-        if name in botcommands:
+        elif name in choicedf.name.values:
+            return True
 
+        elif name in botcommands:
             return True
         else:
             return False
@@ -103,14 +141,28 @@ class CommandMaker():
 
 
 
-    def create_command(self,name,author:discord.Member,content):
+    def create_text_command(self,name,author:discord.Member,content):
 
 
         df = self.df
-
         newRow = {'name': name, 'content': content, 'authorID': author.id}
         self.df = df.append(newRow,ignore_index = True)
         self.save()
+
+
+
+    def make_choice_command(self,name,author:discord.Member,choices):
+
+        df = self.df
+        choiceslist = choices.split(".")
+
+        if len(choices) > 1:
+            newRow = {'name': name, 'choices': choices, 'authorID': author.id}
+            self.df = df.append(newRow, ignore_index=True)
+            self.save()
+
+        else:
+            raise Exception("There can't be just one choice , Provide more ")
 
 
     def delete_command(self,author : discord.Member,name):
@@ -149,15 +201,7 @@ class CommandMaker():
 
 
 
-
-
-
-
-
-
-
-
-    def run_command(self,name):
+    def run_text_command(self,name):
 
 
 
@@ -171,6 +215,24 @@ class CommandMaker():
         else:
 
             raise Exception("command not found")
+
+
+    def run_choice_command(self,name):
+
+        df = self.df
+
+        if name in self.df.values:
+            commandRow = df[df.name == name]
+            choices = commandRow.choices.values[0]
+
+            choicelist  = choices.split(".")
+            choice = random.choice(choicelist)
+
+            return choice
+
+        else:
+            raise Exception("command not found")
+
 
 def check_existence(guild : discord.Guild):
 

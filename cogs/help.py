@@ -71,21 +71,8 @@ class Help(commands.Cog, name="Help"):
                         cmds = "".join(shown_commands)
                         subtext.append(cmds)
 
-                        if name == "moderation":
-                            cats.append(f"<:rooCop:596577110982918146> **{name}**")
 
-                        elif name == "fun":
-                            cats.append(f"<:haha:613185229653409883> **{name}**")
-                        elif name == "music":
-                            cats.append(f"<:FeelsBeatsMan:597591202614738947> **{name}** ")
-
-                        elif name == "leveling":
-                            cats.append(f"<:vv:597590298964656169> **{name}**")
-
-                        elif name == "other":
-                            cats.append(f"<:rooEZSip:596577108675788800> **{name}**")
-
-                        elif name == "Utility":
+                        if name == "Utility":
                             cats.append(f"🛠️ **{name}**")
 
                         elif name == "jishaku":
@@ -130,13 +117,21 @@ now you can use `{prefix}hi` anytime and the bot will respond hi
                 custCommands = ""
                 try:
 
-                    commandMaker = CommandMaker(ctx.guild, self.client)
+                    commandMaker = CommandMaker("text",ctx.guild, self.client)
                     cmList = commandMaker.commandlist
 
 
+                    if len(cmList)< 5:
+                        for command in cmList:
+                            custCommands += f"`{command}` "
 
-                    for command in cmList[:3]:
-                        custCommands += f"`{command}` "
+                    else:
+                        for command in cmList[:6]:
+                            custCommands += f"`{command}` "
+
+                        custCommands += f".... {cmList[-1]}"
+
+
 
                     if len(cmList)!= 0:
                        embed.add_field(name=":pencil: **Server commands**", value=custCommands, inline=False)
