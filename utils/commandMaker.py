@@ -2,8 +2,8 @@ import pandas as pd
 import discord
 from discord.ext import commands
 import random
-
-
+import numpy
+from utils.helperFuncs import get_color
 def make_csv(guild,type):
 
 
@@ -17,7 +17,8 @@ def make_csv(guild,type):
         df.to_csv(f"data/{type}/{guild}.csv", index=False)
 
     elif type == "embed":
-        pass
+        df = pd.DataFrame(columns=['name', 'title','description','color','footer','footerurl','thumbnailurl','embed_author_name','embed_author_url','image_url','authorID'])
+        df.to_csv(f"data/{type}/{guild}.csv", index=False)
 
     else:
         raise Exception("Type has to be either text, choice or embed")
@@ -50,9 +51,11 @@ class CommandMaker():
             
         self.text_df = get_csv(self.guildname,"text")
         self.choice_df = get_csv(self.guildname,"choice")
+        self.embed_df = get_csv(self.guildname,"embed")
 
         self.text_commands = self.text_df.name.tolist()
         self.choice_commands = self.choice_df.name.tolist()
+        self.embed_commands = self.embed_df.name.tolist()
 
 
         self.type  = type
@@ -61,20 +64,11 @@ class CommandMaker():
 
 
 
-        commandlist = self.text_commands + self.choice_commands
+        commandlist = self.text_commands + self.choice_commands + self.embed_commands
         self.commandlist = commandlist
         self.commands = ""
         for command in commandlist:
             self.commands += f"`{command}"
-
-
-
-
-
-
-
-
-
 
     def save(self):
         type = self.type
@@ -85,6 +79,7 @@ class CommandMaker():
 
         textdf = get_csv(self.guildname,"text")
         choicedf = get_csv(self.guildname,"choice")
+        embeddf = get_csv(self.guildname,"embed")
 
         botcommands = []
         for command in self.bot.commands:
@@ -96,10 +91,24 @@ class CommandMaker():
         elif name in choicedf.name.values:
             return True
 
+        elif name in embeddf.name.values:
+            return True
+
         elif name in botcommands:
             return True
         else:
             return False
+
+
+    def embed_command_exists(self,name):
+        embeddf = get_csv(self.guildname, "embed")
+
+        if name in embeddf.name.values:
+            return True
+        else:
+            return False
+
+
 
     def custom_command_exists(self,name):
 
@@ -165,6 +174,61 @@ class CommandMaker():
             raise Exception("There can't be just one choice , Provide more ")
 
 
+    def make_embed_command(self,name,author : discord.Member,description):
+
+        df =self.df
+        newRow = {'name' : name ,
+                  'title' : "​",
+                  'description' : description,
+                  'color' : "​",
+                  'footer' : "​",
+                  'footerurl' : "​",
+                  'thumbnailurl' : "​",
+                 'embed_author_name' : "​",
+                 'embed_author_url' : "​",
+                  'image_url' : "​",
+                  'authorID' : author.id}
+        self.df = df.append(newRow, ignore_index=True)
+        self.save()
+
+
+    def modfiy_embed_color(self,author : discord.Member,name,color):
+
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.color.values[0] = str(color)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+    def add_title(self,author : discord.Member,name,title):
+
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.title.values[0] = str(title)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+
+
+
+
+
+
+
     def delete_command(self,author : discord.Member,name):
 
         df = self.df
@@ -192,8 +256,6 @@ class CommandMaker():
             df[df.name == name] = cmdRow
             self.df = df
             self.save()
-
-
 
         else:
             raise Exception("You are not the owner of that command")
@@ -232,6 +294,42 @@ class CommandMaker():
 
         else:
             raise Exception("command not found")
+
+
+    def run_embed_command(self,name):
+        df = self.df
+
+        if name in self.df.values:
+            commandRow = df[df.name == name]
+            title = commandRow.title.values[0]
+            description = commandRow.description.values[0]
+            color = commandRow.color.values[0]
+
+
+            embed = discord.Embed()
+
+            try:
+                  embed = discord.Embed(color=get_color(color))
+            except:
+                pass
+
+
+            try:
+                embed.description = description
+            except:
+                pass
+
+            if not title == "​":
+                embed.title = title
+            else:
+                pass
+
+            return embed
+
+
+        else:
+            raise Exception("command not found")
+
 
 
 def check_existence(guild : discord.Guild):

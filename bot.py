@@ -4,10 +4,10 @@ from utils.commandMaker import CommandMaker
 import os
 from setup import token
 
-prefix = "cm-"
+prefix = "cm."
 bot = commands.Bot(command_prefix=prefix)
 
-game = discord.Game(name=f'{prefix}help')
+game = discord.Game(name=f'cm-help')
 
 @bot.event
 async def on_ready():
@@ -55,7 +55,7 @@ now you can use `{prefix}hi` anytime and the bot will respond `hi`
 
     await logchannel.send(f"<a:sufisheep:718395610549452901> The bot has been added to **{guild.name}** , We've reached our **{len(bot.guilds)}th** server! <a:sufisheep:718395610549452901>")
 
-
+"""
 @bot.event
 async def on_command_error(ctx,error):
 
@@ -83,6 +83,8 @@ async def on_command_error(ctx,error):
 
     else:
         pass
+        
+"""
 
 
 launchBot(bot)

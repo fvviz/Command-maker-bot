@@ -5,7 +5,7 @@ import platform
 from discord.ext.commands.cooldowns import BucketType
 import datetime
 import os
-
+from utils.helperFuncs import *
 
 class Utility(commands.Cog):
 
@@ -100,6 +100,34 @@ class Utility(commands.Cog):
                 await msg.edit(
                     content=f"{ctx.author.mention} bruh dat command name be af long doe , try making it shorter maybe?")
 
+
+    @make.command(name = "embed")
+    async def embed(self,ctx,name,*,description):
+        guild = ctx.guild
+
+        msg = await ctx.send(f"<a:loading:718075868345532466> | Checking availability of command  `{name}`")
+        try:
+            pd.read_csv(f"data/choice/{guild.id}.csv")
+        except FileNotFoundError:
+            make_csv(guild.id, "choice")
+
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.does_command_exist(name):
+            await asyncio.sleep(2)
+            await msg.edit(content=":x: | A command with that name already exists")
+
+        else:
+            await asyncio.sleep(2)
+            await msg.edit(content=f"<:greenTick:596576670815879169> | command **{name}** available ")
+            msg2 = await ctx.send(f"<a:loading:718075868345532466> | creating command **{name}**")
+
+            commandMaker.make_embed_command(name,ctx.author,description = description)
+
+            await asyncio.sleep(2)
+            await msg2.edit(content=f"<:greenTick:596576670815879169> | command **{name}** created")
+
+
     @make.error
     async def make_error(self, ctx, error):
 
@@ -133,6 +161,56 @@ class Utility(commands.Cog):
             await ctx.send(f"bruh you aint even specifying {error.param}")
 
     """
+
+
+    @commands.group(name="embed")
+    async def edit_embed(self,ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send('Invalid make type passed')
+
+    @edit_embed.command()
+    async def setcolor(self,ctx,name,*,color):
+        guild = ctx.guild
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.embed_command_exists(name):
+            if does_color_exist(color):
+                     msg2 = await ctx.send(f"<a:loading:718075868345532466> | setting color of embed command **{name}** to `{color}`")
+                     commandMaker.modfiy_embed_color(ctx.author, name, color)
+
+                     await ctx.send("modfied")
+
+                     await asyncio.sleep(2)
+                     await msg2.edit(content=f"<:greenTick:596576670815879169> | changed color of embed command **{name}** to {color}")
+            else:
+
+
+
+                colors = ""
+                for color in color_dict.keys():
+                    colors += f"`{color}` "
+
+                await ctx.send(f"that color does not seem to exist, the available colors are {colors}")
+
+    @edit_embed.command()
+    async def addtitle(self, ctx, name, *, title):
+        guild = ctx.guild
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.embed_command_exists(name):
+
+            if len(title) < 256:
+
+                msg2 = await ctx.send(
+                    f"<a:loading:718075868345532466> | setting title of embed command **{name}**")
+                commandMaker.add_title(ctx.author, name, title)
+                await asyncio.sleep(2)
+                await msg2.edit(
+                    content=f"<:greenTick:596576670815879169> | title of embed command**{name}** has been set")
+
+        else:
+
+            await ctx.send("too bad , command does not seem to exist , make the command first and then add titles using this command")
 
     @commands.command(aliases=["commmandauthor"])
     async def commandinfo(self, ctx, command):
@@ -211,20 +289,28 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def run(self, ctx, name):
-        try:
+
             print(ctx.message.content)
             try:
                 commandMaker = CommandMaker("text", ctx.guild, self.bot)
                 output = commandMaker.run_text_command(name)
                 await ctx.send(output)
-            except:
-                commandMaker = CommandMaker("choice", ctx.guild, self.bot)
-                output = commandMaker.run_choice_command(name)
-                await ctx.send(output)
+            except Exception:
 
-        except Exception:
+                print(f"{Exception}")
 
-            await ctx.send(f"{Exception}")
+                try:
+                    commandMaker = CommandMaker("choice", ctx.guild, self.bot)
+                    output = commandMaker.run_choice_command(name)
+                    await ctx.send(output)
+                except Exception:
+                    print(f"{Exception}")
+                    commandMaker = CommandMaker("embed", ctx.guild, self.bot)
+                    output = commandMaker.run_embed_command(name)
+                    await ctx.send(embed = output)
+
+
+
 
     @commands.command()
     async def edit(self, ctx, name):
@@ -233,11 +319,10 @@ class Utility(commands.Cog):
 
         msg = await ctx.send(f"<a:loading:718075868345532466> | Checking availability of command  `{name}`")
         try:
-            pd.read_csv(f"data/{guild.id}.csv")
+            pd.read_csv(f"data/text/{guild.id}.csv")
         except FileNotFoundError:
-            make_csv(guild)
-
-        commandMaker = CommandMaker(guild, self.bot)
+            make_csv(guild=guild,type="text")
+        commandMaker = CommandMaker("text",guild, self.bot)
 
         if commandMaker.custom_command_exists(name):
             await asyncio.sleep(2)
