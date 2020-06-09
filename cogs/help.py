@@ -95,9 +95,11 @@ class Help(commands.Cog, name="Help"):
  
 **:pencil: __Usage__**
 To make your own commands, 
-Use command `{prefix}make <command-name-here> <content>`
+Use command `{prefix}make <command-type> <command-name-here> <content>`
+currently there are 2 command types available . `text` and `choice`
 
-**Example** : `{prefix}make hi hi`
+:pencil: Making a simple command
+**Example** : `{prefix}make text hi hi`
 This should make a command called 'hi'
 now you can use `{prefix}hi` anytime and the bot will respond hi
 
