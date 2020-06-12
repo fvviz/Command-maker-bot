@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 import random
 import numpy
-from utils.helperFuncs import get_color
+from utils.helperFuncs import *
 def make_csv(guild,type):
 
 
@@ -17,7 +17,7 @@ def make_csv(guild,type):
         df.to_csv(f"data/{type}/{guild}.csv", index=False)
 
     elif type == "embed":
-        df = pd.DataFrame(columns=['name', 'title','description','color','footer','footerurl','thumbnailurl','embed_author_name','embed_author_url','image_url','authorID'])
+        df = pd.DataFrame(columns=['name', 'title','description','color','footer','footerurl','thumbnailurl','author_name','author_url','image_url','authorID'])
         df.to_csv(f"data/{type}/{guild}.csv", index=False)
 
     else:
@@ -184,8 +184,8 @@ class CommandMaker():
                   'footer' : "​",
                   'footerurl' : "​",
                   'thumbnailurl' : "​",
-                 'embed_author_name' : "​",
-                 'embed_author_url' : "​",
+                 'author_name' : "​",
+                 'author_url' : "​",
                   'image_url' : "​",
                   'authorID' : author.id}
         self.df = df.append(newRow, ignore_index=True)
@@ -214,6 +214,94 @@ class CommandMaker():
 
         if cmdRow.authorID.values[0] == int(author.id):
             cmdRow.title.values[0] = str(title)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+
+
+    def add_thumbnail(self,author : discord.Member,name,url):
+
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.thumbnailurl.values[0] = str(url)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+    def add_author_text(self,author : discord.Member,name,authorname):
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.author_name.values[0] = str(authorname)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+    def add_author_url(self,author : discord.Member,name,url):
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.author_url.values[0] = str(url)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+    def add_footer_text(self, author: discord.Member, name, authorname):
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.footer.values[0] = str(authorname)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+
+    def add_footer_url(self,author : discord.Member,name,url):
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.footerurl.values[0] = str(url)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+    def add_desc(self, author: discord.Member, name, desc):
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.description.values[0] = str(desc)
 
             df[df.name == name] = cmdRow
             self.df = df
@@ -304,6 +392,16 @@ class CommandMaker():
             title = commandRow.title.values[0]
             description = commandRow.description.values[0]
             color = commandRow.color.values[0]
+            thumburl = commandRow.thumbnailurl.values[0]
+
+            footer_text = commandRow.footer.values[0]
+            footer_url = commandRow.footerurl.values[0]
+
+            authname = " "
+            authurl = " "
+
+            authname = commandRow.author_name.iloc[0]
+            authurl = commandRow.author_url.iloc[0]
 
 
             embed = discord.Embed()
@@ -323,6 +421,56 @@ class CommandMaker():
                 embed.title = title
             else:
                 pass
+
+            if not thumburl == "​":
+                embed.set_thumbnail(url=thumburl)
+            else:
+                pass
+
+            try:
+                if not authname == " ":
+                    if not authurl == " ":
+
+                        imgtype = get_content_type(authurl)
+
+                        try:
+                            if str(imgtype).startswith("image"):
+                                embed.set_author(name=authname, icon_url=authurl)
+                            else:
+                                pass
+
+                        except:
+
+                            pass
+                    else:
+                        pass
+                else:
+                    pass
+            except:
+                pass
+
+            try:
+                if not footer_text == " ":
+                    if not footer_url == " ":
+
+                        imgtype = get_content_type(footer_url)
+
+                        try:
+                            if str(imgtype).startswith("image"):
+                                embed.set_footer(text=footer_text, icon_url=footer_url)
+                            else:
+                                pass
+                        except:
+
+                            pass
+                    else:
+                        embed.set_footer(text=footer_text)
+                else:
+                    pass
+            except:
+                pass
+
+
 
             return embed
 

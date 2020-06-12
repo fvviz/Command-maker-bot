@@ -6,6 +6,7 @@ from discord.ext.commands.cooldowns import BucketType
 import datetime
 import os
 from utils.helperFuncs import *
+import requests
 
 class Utility(commands.Cog):
 
@@ -162,14 +163,75 @@ class Utility(commands.Cog):
 
     """
 
+    @commands.group()
+    @commands.cooldown(3, 3600, BucketType.member)
+    async def edit(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send('Invalid type passed')
 
-    @commands.group(name="embed")
+    @edit.error
+    async def edit_error(self, ctx, error):
+
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+    @edit.command(name = "text")
+    async def text_edit(self,ctx,name):
+        guild = ctx.guild
+
+        msg = await ctx.send(f"<a:loading:718075868345532466> | Checking availability of command  `{name}`")
+        try:
+            pd.read_csv(f"data/text/{guild.id}.csv")
+        except FileNotFoundError:
+            make_csv(guild=guild, type="text")
+        commandMaker = CommandMaker("text", guild, self.bot)
+
+        if commandMaker.custom_command_exists(name):
+            await asyncio.sleep(2)
+
+            await msg.edit(content=f"<:greenTick:596576670815879169> | command **{name}** exists")
+
+            await ctx.send("Now , please type out the output of the command, **You have 20 seconds**")
+
+            def check(message):
+                return message.author == ctx.author and message.channel == ctx.channel
+
+            content = await self.bot.wait_for("message", check=check)
+
+            try:
+                newmsg = await ctx.send("<a:loading:718075868345532466> | **running checks**")
+                commandMaker.edit_command(name, ctx.author, content.content)
+                await asyncio.sleep(2)
+                await newmsg.edit(content="<:greenTick:596576670815879169> | **checks completed**")
+                newmsg2 = await ctx.send(f"<a:loading:718075868345532466> | **editing command** `{name}`")
+                await asyncio.sleep(2)
+                await newmsg2.edit(
+                    content=f"<:greenTick:596576670815879169> | **command `{name}` edited successfully**")
+
+            except Exception as error:
+                await asyncio.sleep(2)
+                await newmsg.edit(content=f":x: | **checks failed** : `{error}`")
+
+        elif commandMaker.does_command_exist(name):
+            await asyncio.sleep(2)
+            await msg.edit(content=f":x: | **Nice try , But Built-in utility commands cannot be edited**")
+
+        else:
+            await asyncio.sleep(2)
+            await msg.edit(content=f":x: | **Command does not exist**")
+
+
+    @edit.group(name="embed")
     async def edit_embed(self,ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send('Invalid make type passed')
+            await ctx.send('Invalid embed edit type passed')
 
     @edit_embed.command()
-    async def setcolor(self,ctx,name,*,color):
+    async def color(self,ctx,name,*,color):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
 
@@ -185,7 +247,6 @@ class Utility(commands.Cog):
             else:
 
 
-
                 colors = ""
                 for color in color_dict.keys():
                     colors += f"`{color}` "
@@ -193,7 +254,7 @@ class Utility(commands.Cog):
                 await ctx.send(f"that color does not seem to exist, the available colors are {colors}")
 
     @edit_embed.command()
-    async def addtitle(self, ctx, name, *, title):
+    async def title(self, ctx, name, *, title):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
 
@@ -211,6 +272,169 @@ class Utility(commands.Cog):
         else:
 
             await ctx.send("too bad , command does not seem to exist , make the command first and then add titles using this command")
+
+
+    @edit_embed.group()
+    async def author(self,ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send('Invalid author edit type passed')
+
+
+
+    @author.command()
+    async def name(self,ctx,commandname,authorname):
+        guild = ctx.guild
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.does_command_exist(commandname):
+
+            if isinstance(authorname, discord.Member):
+                msg2 = await ctx.send(
+                    f"<a:loading:718075868345532466> | setting author name of embed command `{commandname}` ")
+
+                name = ctx.author.name
+                url = ctx.author.avatar_url
+
+                commandMaker.add_author_text(ctx.author, ctx.author.name)
+                await msg2.edit(
+                    content=f"<:greenTick:596576670815879169> | author name of embed command `{name}` has been set")
+
+            else:
+
+                        msg2 = await ctx.send(
+                            f"<a:loading:718075868345532466> | setting author name of embed command `{commandname}` ")
+                        commandMaker.add_author_text(ctx.author, commandname, authorname)
+                        await asyncio.sleep(2)
+                        await msg2.edit(
+                            content=f"<:greenTick:596576670815879169> | author name of embed command `{commandname}` has been set")
+
+
+
+    @author.command()
+    async def url(self,ctx,commandname,url):
+        guild = ctx.guild
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.does_command_exist(commandname):
+
+
+                try:
+                    content_type = get_content_type(url)
+
+                    if str(content_type).startswith("image"):
+                        msg2 = await ctx.send(
+                            f"<a:loading:718075868345532466> | setting author of embed command `{commandname}` ")
+                        commandMaker.add_author_url(ctx.author, commandname, url)
+                        await asyncio.sleep(2)
+                        await msg2.edit(
+                            content=f"<:greenTick:596576670815879169> | author of embed command `{commandname}` has been set")
+
+                    else:
+                        await ctx.send("the url that was provided does not seem to be a valid image or gif")
+                except requests.exceptions.MissingSchema:
+                    await ctx.send("the url that was provided does not seem to be a valid image or gif")
+
+
+
+    @edit_embed.group()
+    async def footer(self,ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send('Invalid author edit type passed')
+
+
+    @footer.command(name = "text")
+    async def _name(self, ctx, commandname, text):
+        guild = ctx.guild
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.does_command_exist(commandname):
+
+
+                msg2 = await ctx.send(
+                    f"<a:loading:718075868345532466> | setting author name of embed command `{commandname}` ")
+                commandMaker.add_footer_text(ctx.author, commandname, text)
+                await asyncio.sleep(2)
+                await msg2.edit(
+                    content=f"<:greenTick:596576670815879169> | footer name of embed command `{commandname}` has been set")
+
+    @footer.command(name = "url")
+    async def _url(self, ctx, commandname, url):
+        guild = ctx.guild
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.does_command_exist(commandname):
+
+            try:
+                content_type = get_content_type(url)
+
+                if str(content_type).startswith("image"):
+                    msg2 = await ctx.send(
+                        f"<a:loading:718075868345532466> | setting footer url of embed command `{commandname}` ")
+                    commandMaker.add_footer_url(ctx.author, commandname, url)
+                    await asyncio.sleep(2)
+                    await msg2.edit(
+                        content=f"<:greenTick:596576670815879169> | footer url of embed command `{commandname}` has been set")
+
+                else:
+                    await ctx.send("the url that was provided does not seem to be a valid image or gif")
+            except requests.exceptions.MissingSchema:
+                await ctx.send("the url that was provided does not seem to be a valid image or gif")
+
+    @edit_embed.command()
+    async def description(self, ctx, commandname,*, description):
+        guild = ctx.guild
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.embed_command_exists(commandname):
+                    msg2 = await ctx.send(
+                        f"<a:loading:718075868345532466> | setting description of embed command `{name}` ")
+                    commandMaker.add_thumbnail(ctx.authorm,commandname,description)
+                    await asyncio.sleep(2)
+                    await msg2.edit(
+                        content=f"<:greenTick:596576670815879169> | thumbnail of embed command `{name}` has been set")
+
+
+
+    @edit_embed.command()
+    async def thumbnail(self, ctx, name,url):
+        guild = ctx.guild
+        commandMaker = CommandMaker("embed", guild, self.bot)
+
+        if commandMaker.embed_command_exists(name):
+
+
+
+
+
+            try:
+                content_type = get_content_type(url)
+
+                if str(content_type).startswith("image"):
+                    msg2 = await ctx.send(
+                        f"<a:loading:718075868345532466> | setting thumbnail of embed command `{name}` ")
+                    commandMaker.add_thumbnail(ctx.author, name, url)
+                    await asyncio.sleep(2)
+                    await msg2.edit(
+                        content=f"<:greenTick:596576670815879169> | thumbnail of embed command `{name}` has been set")
+
+                else:
+                    await ctx.send("the url that was provided does not seem to be a valid image or gif")
+            except requests.exceptions.MissingSchema:
+                await ctx.send("the url that was provided does not seem to be a valid image or gif")
+
+
+
+
+
+
+
+
+
+        else:
+
+            await ctx.send(
+                "too bad , command does not seem to exist , make the command first and then add titles using this command")
+
 
     @commands.command(aliases=["commmandauthor"])
     async def commandinfo(self, ctx, command):
@@ -312,51 +536,7 @@ class Utility(commands.Cog):
 
 
 
-    @commands.command()
-    async def edit(self, ctx, name):
 
-        guild = ctx.guild
-
-        msg = await ctx.send(f"<a:loading:718075868345532466> | Checking availability of command  `{name}`")
-        try:
-            pd.read_csv(f"data/text/{guild.id}.csv")
-        except FileNotFoundError:
-            make_csv(guild=guild,type="text")
-        commandMaker = CommandMaker("text",guild, self.bot)
-
-        if commandMaker.custom_command_exists(name):
-            await asyncio.sleep(2)
-
-            await msg.edit(content=f"<:greenTick:596576670815879169> | command **{name}** exists")
-
-            await ctx.send("Now , please type out the output of the command, **You have 20 seconds**")
-
-            def check(message):
-                return message.author == ctx.author and message.channel == ctx.channel
-
-            content = await self.bot.wait_for("message", check=check)
-
-            try:
-                newmsg = await ctx.send("<a:loading:718075868345532466> | **running checks**")
-                commandMaker.edit_command(name, ctx.author, content.content)
-                await asyncio.sleep(2)
-                await newmsg.edit(content="<:greenTick:596576670815879169> | **checks completed**")
-                newmsg2 = await ctx.send(f"<a:loading:718075868345532466> | **editing command** `{name}`")
-                await asyncio.sleep(2)
-                await newmsg2.edit(
-                    content=f"<:greenTick:596576670815879169> | **command `{name}` edited successfully**")
-
-            except Exception as error:
-                await asyncio.sleep(2)
-                await newmsg.edit(content=f":x: | **checks failed** : `{error}`")
-
-        elif commandMaker.does_command_exist(name):
-            await asyncio.sleep(2)
-            await msg.edit(content=f":x: | **Nice try , But Built-in utility commands cannot be edited**")
-
-        else:
-            await asyncio.sleep(2)
-            await msg.edit(content=f":x: | **Command does not exist**")
 
     @commands.command(aliases=["showcommands", "cmds"])
     async def commands(self, ctx):

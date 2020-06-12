@@ -1,5 +1,5 @@
 import discord
-
+import requests
 
 
 color_dict = {
@@ -26,3 +26,7 @@ def get_color(name):
         return color_dict[name]
     else:
         raise Exception("color not found")
+
+
+def get_content_type(url):
+    return requests.head(url).headers['Content-Type']

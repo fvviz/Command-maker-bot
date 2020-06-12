@@ -18,6 +18,7 @@ def launchBot(bot : commands.bot):
     bot.load_extension("cogs.utility")
     bot.remove_command("help")
     bot.load_extension("cogs.help")
+    bot.load_extension("cogs.owner")
     bot.run(token)
 
 @bot.event
