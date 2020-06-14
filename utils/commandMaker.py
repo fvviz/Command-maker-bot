@@ -163,7 +163,7 @@ class CommandMaker():
     def make_choice_command(self,name,author:discord.Member,choices):
 
         df = self.df
-        choiceslist = choices.split(".")
+        choiceslist = choices.split("/")
 
         if len(choices) > 1:
             newRow = {'name': name, 'choices': choices, 'authorID': author.id}
@@ -311,6 +311,21 @@ class CommandMaker():
             raise Exception("You are not the author of that command")
 
 
+    def add_image(self, author: discord.Member, name, url):
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.image_url.values[0] = str(url)
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the author of that command")
+
+
 
 
 
@@ -375,7 +390,7 @@ class CommandMaker():
             commandRow = df[df.name == name]
             choices = commandRow.choices.values[0]
 
-            choicelist  = choices.split(".")
+            choicelist  = choices.split("/")
             choice = random.choice(choicelist)
 
             return choice
@@ -393,6 +408,7 @@ class CommandMaker():
             description = commandRow.description.values[0]
             color = commandRow.color.values[0]
             thumburl = commandRow.thumbnailurl.values[0]
+            imageurl = commandRow.image_url.values[0]
 
             footer_text = commandRow.footer.values[0]
             footer_url = commandRow.footerurl.values[0]
@@ -424,6 +440,11 @@ class CommandMaker():
 
             if not thumburl == "​":
                 embed.set_thumbnail(url=thumburl)
+            else:
+                pass
+
+            if not imageurl== "​":
+                embed.set_image(url=imageurl)
             else:
                 pass
 
@@ -462,9 +483,9 @@ class CommandMaker():
                                 pass
                         except:
 
-                            pass
+                            embed.set_footer(text=footer_text)
                     else:
-                        embed.set_footer(text=footer_text)
+                        pass
                 else:
                     pass
             except:

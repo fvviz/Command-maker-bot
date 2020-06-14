@@ -1,5 +1,6 @@
-import discord
+
 import requests
+
 
 
 color_dict = {
@@ -13,7 +14,6 @@ color_dict = {
     "dark purple":0x71368a,
     "magenta": 0xe91e63,
     "dark magenta":0xad1457,
-
 }
 
 def does_color_exist(color):
@@ -30,3 +30,5 @@ def get_color(name):
 
 def get_content_type(url):
     return requests.head(url).headers['Content-Type']
+
+

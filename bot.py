@@ -3,8 +3,10 @@ from discord.ext import commands
 from utils.commandMaker import CommandMaker
 import os
 from setup import token
+from utils.runner import run
 
-prefix = "cm."
+prefix = "cm-" \
+         ""
 bot = commands.Bot(command_prefix=prefix)
 
 game = discord.Game(name=f'cm-help')
@@ -37,9 +39,9 @@ async def on_guild_join(guild : discord.Guild):
  
 **:pencil: __Usage__**
 To make your own commands, 
-Use command `{prefix}make <command-name-here> <content>`
+Use command `{prefix}make <command-type> <command-name-here> <content>`
 
-**Example** : `{prefix}make hi hi`
+**Example** : `{prefix}make text ji hi`
 This should make a command called 'hi'
 now you can use `{prefix}hi` anytime and the bot will respond `hi`
 
@@ -56,7 +58,7 @@ now you can use `{prefix}hi` anytime and the bot will respond `hi`
 
     await logchannel.send(f"<a:sufisheep:718395610549452901> The bot has been added to **{guild.name}** , We've reached our **{len(bot.guilds)}th** server! <a:sufisheep:718395610549452901>")
 
-"""
+
 @bot.event
 async def on_command_error(ctx,error):
 
@@ -64,28 +66,14 @@ async def on_command_error(ctx,error):
 
     if isinstance(error,commands.CommandNotFound):
 
-        try:
-            print("command name" , ctx.invoked_with)
-            try:
-                commandMaker = CommandMaker("text",ctx.guild,bot)
-                output = commandMaker.run_text_command(name=ctx.invoked_with)
-                await ctx.send(output)
-            except:
-                commandMaker = CommandMaker("choice", ctx.guild, bot)
-                print(ctx.command)
-                output = commandMaker.run_choice_command(name=ctx.invoked_with)
-                
-                await ctx.send(output)
+        command = ctx.invoked_with
 
-        except:
-
-            await ctx.send(f"{error}")
+        await run(ctx = ctx,name=command,bot=bot)
 
 
     else:
         pass
-        
-"""
+
 
 
 launchBot(bot)
