@@ -73,21 +73,13 @@ class Help(commands.Cog, name="Help"):
 
 
                         if name == "Utility":
-                            cats.append(f"🛠️ **{name}**")
+                            cats.append(f"🛠️ **{name} Commands**")
 
                         elif name == "jishaku":
                             cats.append(f"jisaku")
 
 
-                        #desc += "**__" + name + "__** \n"
-
-                #desc += '```py\n\n"<> denotes an argument/parameter of a command"\n@ DO NOT ACTUALLY USE TYPE <> WHEN TYPING COMMANDS \n``` \n'
-
-
-                #desc += f'\n\n• Use `{prefix}help <command>` for more help ; example : `{prefix}help slap`'
-
                 desc += f"""
-**__Command maker bot__**
 
 [`Invite to your server`](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)
 
@@ -96,54 +88,40 @@ class Help(commands.Cog, name="Help"):
 **:pencil: __Usage__**
 To make your own commands, 
 Use command `{prefix}make <command-type> <command-name-here> <content>`
-currently there are 2 command types available . `text` and `choice`
 
-:pencil: Making a simple command
+**:pencil: __Available Command Types__**
+*click on a particular command type to learn more about*
+
+• [`text`](https://docs.command-maker.ml/command-types/text-commands)
+• [`choice`](https://docs.command-maker.ml/command-types/text-commands)
+• [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
+
+**:pencil: __Making a simple command__**
 **Example** : `{prefix}make text hi hi`
 This should make a command called 'hi'
 now you can use `{prefix}hi` anytime and the bot will respond hi
 
+To get a list of custom commands in your server,use
+`cm-commands`
+
+Header over to the manual to see more examples
+[**`📝 Read the manual 📝`** ](https://docs.command-maker.ml/)
+
                         """
                 embed = discord.Embed(
-
+                    title = "Command Maker bot",
                     description=desc,
                     color = color, #ctx.guild.get_member(577140178791956500).top_role.color,
-                    timestamp=ctx.message.created_at
+                    timestamp=ctx.message.created_at,
+                    url = "https://docs.command-maker.ml/"
                 )
+
+
                 embed.set_thumbnail(url=bot_av)
 
                 for cat in cats:
 
                   embed.add_field(name=cat,value=subtext[cats.index(cat)])
-
-                custCommands = ""
-                try:
-
-                    commandMaker = CommandMaker("text",ctx.guild, self.client)
-                    cmList = commandMaker.commandlist
-
-
-                    if len(cmList)< 5:
-                        for command in cmList:
-                            custCommands += f"`{command}` "
-
-                    else:
-                        for command in cmList[:6]:
-                            custCommands += f"`{command}` "
-
-                        custCommands += f".... {cmList[-1]}"
-
-
-
-                    if len(cmList)!= 0:
-                       embed.add_field(name=":pencil: **Server commands**", value=custCommands, inline=False)
-                    else:
-                       embed.add_field(name=":pencil: **Server commands**", value="There are no custom commands for this server , try adding some maybe?", inline=False)
-                except:
-                    embed.add_field(name=":pencil: **Server commands**", value="There are no custom commands for this server , try adding some maybe?", inline=False)
-
-
-
 
                 owner = self.client.get_user(247292930346319872)
                 embed.set_footer(text = f"Created by {str(owner)}",icon_url=owner.avatar_url)
