@@ -355,9 +355,24 @@ Before editing an embed , make sure you make it using
                                   color = discord.Color.dark_blue(),
                                   url = "https://docs.command-maker.ml/command-types/embed-commands#adding-author-name-to-an-embed-command")
 
+            embed.description = f"""
+The author component of an embed has two fields
 
+To set them , type 
+`cm-edit embed author <field> <content>`
 
+*Click on a particular field to learn more about it.*
 
+• [`name`](https://docs.command-maker.ml/command-types/embed-commands#adding-author-name-to-an-embed-command)
+• [`url`](https://docs.command-maker.ml/command-types/embed-commands#adding-author-name-to-an-embed-command)
+
+*For usage examples and more*
+[**`Click here`**](https://docs.command-maker.ml/command-types/embed-commands#adding-author-name-to-an-embed-command)
+
+"""
+
+            embed.set_thumbnail(url = self.bot.user.avatar_url)
+            await ctx.send(embed = embed)
     @author.command()
     async def name(self,ctx,commandname,*,authorname):
         guild = ctx.guild
@@ -422,8 +437,29 @@ Before editing an embed , make sure you make it using
     @edit_embed.group()
     async def footer(self,ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send('Invalid author edit type passed')
+            embed = discord.Embed(title="Editing footer fields",
+                                  color=discord.Color.dark_blue(),
+                                  url="https://docs.command-maker.ml/command-types/embed-commands#adding-footer-text-to-an-embed-command")
 
+            embed.description = f"""
+            The footer component of an embed has two fields
+
+            To set them , type 
+            `cm-edit embed footer <field> <content>`
+
+            *Click on a particular field to learn more about it.*
+
+            • [`text`](https://docs.command-maker.ml/command-types/embed-commands#adding-footer-text-to-an-embed-command)
+            • [`url`](https://docs.command-maker.ml/command-types/embed-commands#adding-a-footer-icon-to-an-embed-command)
+
+            *For usage examples and more*
+            [**`Click here`**](https://docs.command-maker.ml/command-types/embed-commands#adding-a-footer-text-to-an-embed-command)
+
+            """
+
+
+            embed.set_thumbnail(url = self.bot.user.avatar_url)
+            await ctx.send(embed = embed)
 
     @footer.command(name = "text")
     async def _name(self, ctx, commandname, text):
