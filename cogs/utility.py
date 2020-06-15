@@ -923,6 +923,9 @@ To set them , type
         cmds1 = ""
 
         commandlist2 = commandMaker.choice_commands
+        commandlist3 = commandMaker.embed_commands
+
+        cmds3 = ""
         cmds2 = ""
 
         for command in commandlist1:
@@ -930,6 +933,9 @@ To set them , type
 
         for command in commandlist2:
             cmds2 += f"`{command}` "
+
+        for command in commandlist3:
+            cmds3 += f"`{command}` "
 
         embed = discord.Embed(
             description=f"""
@@ -940,6 +946,9 @@ To set them , type
 
 **📝 Choice commands**
 {cmds2}
+
+**📝 Choice commands**
+{cmds3}
                                            """,
             color=discord.Color.dark_blue())
 
