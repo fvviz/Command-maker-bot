@@ -4,6 +4,7 @@ import asyncio
 import math
 from bot import prefix
 from utils.commandMaker import *
+from utils.prefixMaker import PrefixMaker
 
 class Help(commands.Cog, name="Help"):
     """Shows help for bot"""
@@ -78,6 +79,16 @@ class Help(commands.Cog, name="Help"):
                         elif name == "jishaku":
                             cats.append(f"jisaku")
 
+                preMaker = PrefixMaker(ctx.guild)
+
+                cust_prefix = None
+
+                if preMaker.has_custom_prefix():
+                    cust_prefix = preMaker.get_prefix()
+
+                if cust_prefix is None:
+                    cust_prefix = f"No custom prefix has been set for this server , you can set one using cm-prefix <prefix>"
+
 
                 desc += f"""
 
@@ -88,6 +99,9 @@ class Help(commands.Cog, name="Help"):
 **:pencil: __Usage__**
 To make your own commands, 
 Use command `{prefix}make <command-type> <command-name-here> <content>`
+
+:pencil2: **Universal prefix** : `{prefix}`
+:pencil2: **Guild custom prefix** : `{cust_prefix}`
 
 **:pencil: __Available Command Types__**
 *click on a particular command type to learn more about*
@@ -104,7 +118,7 @@ now you can use `{prefix}hi` anytime and the bot will respond hi
 To get a list of custom commands in your server,use
 `cm-commands`
 
-Header over to the manual to see more examples
+Head over to the manual to see more examples
 [**`📝 Read the manual 📝`** ](https://docs.command-maker.ml/)
 
                         """
