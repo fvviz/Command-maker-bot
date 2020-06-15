@@ -38,7 +38,7 @@ For a step by step guide on making commands
             embed.set_thumbnail(url = self.bot.user.avatar_url)
             await ctx.send(embed = embed)
 
-    @make.command()
+    @make.command(cooldown_after_parsing = True)
     @commands.cooldown(3, 3600, BucketType.member)
     async def text(self, ctx, name, *, content):
         guild = ctx.guild
@@ -78,7 +78,7 @@ For a step by step guide on making commands
                 await msg.edit(
                     content=f"{ctx.author.mention} bruh dat command name be af long doe , try making it shorter maybe?")
 
-    @make.command()
+    @make.command(cooldown_after_parsing = True)
     @commands.cooldown(3, 3600, BucketType.member)
     async def choice(self, ctx, name, *, choices):
         guild = ctx.guild
@@ -130,7 +130,7 @@ For a step by step guide on making commands
 
 
 
-    @make.command(name = "embed")
+    @make.command(name = "embed",cooldown_after_parsing = True)
     async def embed(self,ctx,name,*,description):
         guild = ctx.guild
 
@@ -229,7 +229,7 @@ For a step by step guide on making commands
                 await ctx.send(":x: | you don't seem to be the owner of that command")
 
 
-    @edit.command(name = "text")
+    @edit.command(name = "text",cooldown_after_parsing = True)
     @commands.cooldown(3, 3600, BucketType.member)
     async def text_edit(self,ctx,name,*,content):
         guild = ctx.guild
@@ -269,6 +269,21 @@ For a step by step guide on making commands
             await asyncio.sleep(2)
             await msg.edit(content=f":x: | **Command does not exist**")
 
+    @text_edit.error
+    async def text_edit_error(self,ctx,error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error,commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
+
+
     @edit.group(name = "embed")
     async def edit_embed(self,ctx):
         if ctx.invoked_subcommand is None:
@@ -304,7 +319,8 @@ Before editing an embed , make sure you make it using
             embed.set_thumbnail(url = self.bot.user.avatar_url)
             await ctx.send(embed = embed)
 
-    @edit_embed.command()
+    @edit_embed.command(cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
     async def color(self,ctx,name,*,color):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
@@ -327,7 +343,24 @@ Before editing an embed , make sure you make it using
 
                 await ctx.send(f"that color does not seem to exist, the available colors are {colors}")
 
-    @edit_embed.command()
+    @color.error
+    async def color_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error, commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
+
+
+
+    @edit_embed.command(cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
     async def title(self, ctx, name, *, title):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
@@ -347,6 +380,20 @@ Before editing an embed , make sure you make it using
 
             await ctx.send("too bad , command does not seem to exist , make the command first and then add titles using this command")
 
+
+    @title.error
+    async def title_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error, commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
 
     @edit_embed.group()
     async def author(self,ctx):
@@ -373,7 +420,9 @@ To set them , type
 
             embed.set_thumbnail(url = self.bot.user.avatar_url)
             await ctx.send(embed = embed)
-    @author.command()
+
+    @author.command(cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
     async def name(self,ctx,commandname,*,authorname):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
@@ -408,7 +457,29 @@ To set them , type
                     await ctx.send(f"embed author can only have upto {limit} characters")
 
 
-    @author.command()
+    @name.error
+    async def name_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error, commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
+
+
+
+
+
+
+
+
+    @author.command(cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
     async def url(self,ctx,commandname,url):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
@@ -432,7 +503,19 @@ To set them , type
                 except requests.exceptions.MissingSchema:
                     await ctx.send("the url that was provided does not seem to be a valid image or gif")
 
+    @url.error
+    async def url_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
 
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error, commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
 
     @edit_embed.group()
     async def footer(self,ctx):
@@ -461,7 +544,8 @@ To set them , type
             embed.set_thumbnail(url = self.bot.user.avatar_url)
             await ctx.send(embed = embed)
 
-    @footer.command(name = "text")
+    @footer.command(name = "text",cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
     async def _name(self, ctx, commandname, text):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
@@ -482,10 +566,22 @@ To set them , type
                 else:
                     await ctx.send(f"embed footer text can only have upto {limit} chars max")
 
+    @_name.error
+    async def _name_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
 
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
 
+        if isinstance(error, commands.CommandInvokeError):
 
-    @footer.command(name = "url")
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
+
+    @footer.command(name = "url",cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
     async def _url(self, ctx, commandname, url):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
@@ -508,7 +604,23 @@ To set them , type
             except requests.exceptions.MissingSchema:
                 await ctx.send("the url that was provided does not seem to be a valid image or gif")
 
-    @edit_embed.command()
+    @_url.error
+    async def _url_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error, commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
+
+
+    @edit_embed.command(cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
     async def description(self, ctx, commandname,*, description):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
@@ -521,8 +633,27 @@ To set them , type
                     await msg2.edit(
                         content=f"<:greenTick:596576670815879169> | description of embed command `{commandname}` has been set")
 
+    @description.error
+    async def description_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
 
-    @edit_embed.command()
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error, commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
+
+
+
+
+
+    @edit_embed.command(cooldown_after_parsing= True)
+    @commands.cooldown(3, 3600, BucketType.member)
+
     async def image(self,ctx,name,url):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
@@ -545,17 +676,27 @@ To set them , type
             except requests.exceptions.MissingSchema:
                 await ctx.send("the url that was provided does not seem to be a valid image or gif")
 
+    @image.error
+    async def image_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
 
-    @edit_embed.command()
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error, commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
+
+    @edit_embed.command(cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
     async def thumbnail(self, ctx, name,url):
         guild = ctx.guild
         commandMaker = CommandMaker("embed", guild, self.bot)
 
         if commandMaker.embed_command_exists(name):
-
-
-
-
 
             try:
                 content_type = get_content_type(url)
@@ -574,18 +715,24 @@ To set them , type
                 await ctx.send("the url that was provided does not seem to be a valid image or gif")
 
 
-
-
-
-
-
-
-
         else:
 
             await ctx.send(
                 "too bad , command does not seem to exist , make the command first and then add titles using this command")
 
+    @thumbnail.error
+    async def thumbnail_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error, commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
 
     @commands.command(aliases=["commmandauthor"])
     async def commandinfo(self, ctx, command):
