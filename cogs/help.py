@@ -95,13 +95,13 @@ class Help(commands.Cog, name="Help"):
 [`Invite to your server`](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)
 
 **Command maker** is a bot with which you can make your own commands. Yes , **your own commands**  
- 
-**:pencil: __Usage__**
-To make your own commands, 
-Use command `{prefix}make <command-type> <command-name-here> <content>`
 
 :pencil2: **Universal prefix** : `{prefix}`
 :pencil2: **Guild custom prefix** : `{cust_prefix}`
+
+**:pencil: __Usage__**
+To make your own commands, 
+Use command `{prefix}make <command-type> <command-name-here> <content>`
 
 **:pencil: __Available Command Types__**
 *click on a particular command type to learn more about*
