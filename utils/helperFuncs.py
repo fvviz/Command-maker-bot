@@ -1,6 +1,6 @@
 
 import requests
-
+import datetime
 
 
 color_dict = {
@@ -31,4 +31,6 @@ def get_color(name):
 def get_content_type(url):
     return requests.head(url).headers['Content-Type']
 
+def dhm(td: datetime.timedelta):
+        return f"{td.seconds // 3600} hours , {(td.seconds // 60) % 60} minutes"
 

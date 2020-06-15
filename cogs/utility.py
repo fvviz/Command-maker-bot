@@ -8,6 +8,7 @@ import os
 from utils.helperFuncs import *
 import requests
 from bot import prefix
+from utils.prefixMaker import PrefixMaker
 class Utility(commands.Cog):
 
     def __init__(self, bot):
@@ -899,8 +900,8 @@ To set them , type
 
 
 
-    @commands.command(aliases=["showcommands", "cmds"])
-    async def commands(self, ctx):
+    @commands.command(name = "commands",aliases=["showcommands", "cmds"])
+    async def _commands(self, ctx):
 
         guild = ctx.guild
 
@@ -944,6 +945,42 @@ To set them , type
 
         embed.set_thumbnail(url=ctx.guild.icon_url)
         await ctx.send(embed=embed)
+
+
+
+    @commands.command(cooldown_after_parsing = True)
+    @commands.check(has_perms)
+    @commands.cooldown(3,86400,BucketType.guild)
+    async def prefix(self,ctx,prefix):
+
+        prefixMaker = PrefixMaker(ctx.guild)
+        prefixMaker.add_prefix(author=ctx.author,prefix=prefix)
+
+        await ctx.send(f"<:greenTick:596576670815879169>  | the prefix for **{ctx.guild.name}** has been to set to {prefix}")
+
+
+
+"""
+
+
+    @prefix.error
+    async def change_prefix_error(self,ctx,error):
+
+        if isinstance(error, commands.CheckFailure):
+            await ctx.send("you require `administrator` permissions to execute that command")
+
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(
+                f":x: | Only 3 commands can be edited in an hour. **Try again in {dhm(error.retry_after)}**")
+
+
+
+
+
+"""
+
+
+
 
 
 def setup(bot):
