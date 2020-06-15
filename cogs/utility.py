@@ -738,18 +738,56 @@ To set them , type
     async def commandinfo(self, ctx, command):
 
         guild = ctx.guild
+        author = ""
+
+
 
         try:
-            commandMaker = CommandMaker(guild, self.bot)
 
-            authorID = commandMaker.get_command_author_id(command)
+            try:
+                commandMaker = CommandMaker("text", guild, self.bot)
 
-            author = guild.get_member(int(authorID))
+                authorID = commandMaker.get_command_author_id(command)
 
-            embed = discord.Embed(title=f"{command} command", color=0x36393E)
-            embed.set_author(name=author, icon_url=author.avatar_url)
+                author = guild.get_member(int(authorID))
 
-            await ctx.send(embed=embed)
+                embed = discord.Embed(title=f"{command} command", color=0x36393E)
+                embed.set_author(name=author, icon_url=author.avatar_url)
+                embed.add_field(name=":pencil: Type", value="text")
+
+                await ctx.send(embed=embed)
+
+            except:
+
+                try:
+                    commandMaker = CommandMaker("choice", guild, self.bot)
+
+                    authorID = commandMaker.get_command_author_id(command)
+
+                    author = guild.get_member(int(authorID))
+
+                    embed = discord.Embed(title=f"{command} command", color=0x36393E)
+                    embed.set_author(name=author, icon_url=author.avatar_url)
+                    embed.add_field(name=":pencil: Type", value="choice")
+
+
+
+
+                    await ctx.send(embed=embed)
+                except:
+                    commandMaker = CommandMaker("embed", guild, self.bot)
+
+                    authorID = commandMaker.get_command_author_id(command)
+
+                    author = guild.get_member(int(authorID))
+
+                    embed = discord.Embed(title=f"{command} command", color=0x36393E)
+                    embed.set_author(name=author, icon_url=author.avatar_url)
+                    embed.add_field(name=":pencil: Type",value="embed")
+
+                    await ctx.send(embed=embed)
+
+
         except:
             await ctx.send("command does not exist?")
 
@@ -767,7 +805,22 @@ To set them , type
     @commands.check(has_perms)
     async def nukecommands(self, ctx):
         msg = await ctx.send(f"<a:loading:718075868345532466> | nuking **{ctx.guild.name}** custom commands")
-        os.remove(f"data/{ctx.guild.id}.csv")
+
+        try:
+            os.remove(f"data/text/{ctx.guild.id}.csv")
+        except:
+            pass
+
+        try:
+            os.remove(f"data/text/{ctx.guild.id}.csv")
+        except:
+            pass
+
+        try:
+            os.remove(f"data/text/{ctx.guild.id}.csv")
+        except:
+            pass
+
         await asyncio.sleep(2)
         await msg.edit(content=f"<:greenTick:596576670815879169> | nuked")
 
@@ -784,30 +837,40 @@ To set them , type
 
         try:
 
-            commandMaker = CommandMaker(guild, self.bot)
+            try:
+                commandMaker = CommandMaker("text", guild, self.bot)
 
-            if command in commandMaker.commands:
+                commandMaker.delete_command(ctx.author,command)
+
+                await ctx.send("<:greenTick:596576670815879169> | deleted")
+
+            except:
 
                 try:
+                    commandMaker = CommandMaker("choice", guild, self.bot)
+
                     commandMaker.delete_command(ctx.author, command)
-                    msg = await ctx.send(f"<a:loading:718075868345532466> | Removing command `{command}`")
-                    await asyncio.sleep(2)
-                    await msg.edit(content=f"<:greenTick:596576670815879169> | Removed command {command} ")
 
+                    await ctx.send("<:greenTick:596576670815879169> | deleted")
                 except:
-                    await ctx.send(":x: | **You are not the owner of that command**")
+                    commandMaker = CommandMaker("embed", guild, self.bot)
+
+                    commandMaker.delete_command(ctx.author, command)
+
+                    await ctx.send("<:greenTick:596576670815879169> | deleted")
 
 
+        except:
+            await ctx.send("command does not exist?")
 
+    @delete.error
+    async def delete_error(self,ctx,error):
+        if isinstance(error, commands.CommandInvokeError):
 
-
-
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
             else:
-                await ctx.send(":x: | **Command does not exist**")
-
-
-        except FileNotFoundError:
-            make_csv(guild)
+                pass
 
     @commands.command()
     async def run(self, ctx, name):
