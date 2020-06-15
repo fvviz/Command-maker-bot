@@ -12,7 +12,7 @@ prefix = "cm."
 async def get_pre(bot, message):
 
 
-  prefix_list = ["cm.","<@!717062311755513976>"]
+  prefix_list = ["cm-","<@!717062311755513976>"]
 
   preMaker = PrefixMaker(message.guild)
   if preMaker.has_custom_prefix():
