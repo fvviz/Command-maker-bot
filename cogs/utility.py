@@ -947,7 +947,7 @@ To set them , type
 **📝 Choice commands**
 {cmds2}
 
-**📝 Choice commands**
+**📝 Embed commands**
 {cmds3}
                                            """,
             color=discord.Color.dark_blue())
