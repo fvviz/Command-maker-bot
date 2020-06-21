@@ -43,6 +43,7 @@ def launchBot(bot : commands.bot):
     bot.remove_command("help")
     bot.load_extension("cogs.help")
     bot.load_extension("cogs.owner")
+    bot.load_extension("cogs.meta")
     bot.run(token)
 
 @bot.event
