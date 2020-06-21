@@ -60,7 +60,6 @@ class PrefixMaker():
 
         try:
                 guild_row = df[df.guildID == int(self.guildID)]
-                print(guild_row)
                 prefix = guild_row.prefix.values[0]
         except:
             pass
