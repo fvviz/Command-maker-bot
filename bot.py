@@ -5,19 +5,17 @@ import os
 from setup import token
 from utils.runner import run
 from utils.prefixMaker import PrefixMaker
+from utils.helperFuncs import guildinfo
 
-
-prefix = "cm."
+prefix = "cm-"
 
 async def get_pre(bot, message):
 
 
-  prefix_list = ["cm-","<@!717062311755513976>"]
+  prefix_list = ["cm-","<@!717062311755513976> "]
 
   preMaker = PrefixMaker(message.guild)
   if preMaker.has_custom_prefix():
-
-
       prefix = preMaker.get_prefix()
       if prefix is not None:
            prefix_list.append(prefix)
@@ -34,6 +32,11 @@ game = discord.Game(name=f'cm-help')
 async def on_ready():
     print('ready')
     await bot.change_presence(status=discord.Status.do_not_disturb, activity=game)
+
+
+
+
+
 
 def launchBot(bot : commands.bot):
     bot.load_extension("cogs.utility")
@@ -88,9 +91,10 @@ Head over to the manual to see more examples
     except:
         pass
 
-    await logchannel.send(f"<a:sufisheep:718395610549452901> The bot has been added to **{guild.name}** , We've reached our **{len(bot.guilds)}th** server! <a:sufisheep:718395610549452901>")
+    await logchannel.send(f"<a:sufisheep:718395610549452901> We have officially reached our **{len(bot.guilds)}th** server <a:sufisheep:718395610549452901>")
+    await guildinfo(guild,logchannel)
 
-"""
+
 @bot.event
 async def on_command_error(ctx,error):
 
@@ -107,5 +111,5 @@ async def on_command_error(ctx,error):
         pass
 
 
-"""
+
 launchBot(bot)

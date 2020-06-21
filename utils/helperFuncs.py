@@ -1,7 +1,7 @@
 
 import requests
 import datetime
-
+import discord
 
 color_dict = {
     "teal" : 0x1abc9c,
@@ -34,3 +34,26 @@ def get_content_type(url):
 def dhm(td: datetime.timedelta):
         return f"{td.seconds // 3600} hours , {(td.seconds // 60) % 60} minutes"
 
+
+async def guildinfo(guild,channel):
+
+    def get_tier(guild: discord.Guild):
+        if guild.premium_tier == 0:
+            return f"🔷 **Level 0** ({guild.premium_subscription_count} boosts)"
+        if guild.premium_tier == 1:
+            return f"🔷 **Level 1** ({guild.premium_subscription_count} boosts)"
+        if guild.premium_tier == 2:
+            return f"🔷 **Level 2** ({guild.premium_subscription_count} boosts)"
+        if guild.premium_tier == 3:
+            return f"🔷 **Level 3** ({guild.premium_subscription_count} boosts)"
+
+    embed = discord.Embed(title=f"{guild.name} ", description=guild.description,
+                          color=discord.Color.dark_blue())
+    embed.set_thumbnail(url=guild.icon_url)
+    embed.add_field(name="**Region :round_pushpin: **", value=f"{str(guild.region)}", inline=False)
+    embed.add_field(name="**Owner :crown: **", value=guild.owner.mention, inline=False)
+    embed.add_field(name="**Created at :clock7: ** ", value=f"{str(guild.created_at)[:10]}",
+                    inline=False)
+    embed.add_field(name="**Member Count**", value=f"{guild.member_count}", inline=False)
+    embed.add_field(name="**Server Boost level**", value=get_tier(guild), inline=False)
+    await channel.send(embed=embed)
