@@ -76,6 +76,13 @@ class Help(commands.Cog, name="Help"):
                         if name == "Utility":
                             cats.append(f"🛠️ **{name} Commands**")
 
+
+                        elif name == "Meta":
+                            cats.append(f"🛠️ **{name} Commands**")
+
+
+
+
                         elif name == "jishaku":
                             cats.append(f"jisaku")
 
@@ -135,7 +142,7 @@ Head over to the manual to see more examples
 
                 for cat in cats:
 
-                  embed.add_field(name=cat,value=subtext[cats.index(cat)])
+                  embed.add_field(name=cat,value=subtext[cats.index(cat)],inline=False)
 
                 owner = self.client.get_user(247292930346319872)
                 embed.set_footer(text = f"Created by {str(owner)}",icon_url=owner.avatar_url)

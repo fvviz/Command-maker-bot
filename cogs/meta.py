@@ -15,16 +15,13 @@ class Meta(commands.Cog):
                               url = "https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336",
                               color = discord.Color.dark_blue())
 
-        embed.description = ":point_up: click on the above link"
-
         embed.set_thumbnail(url  = self.bot.user.avatar_url)
 
-        await ctx.send(embed= embed)
+        await ctx.send(embed = embed)
 
-    @commands.command()
-    async def support(self,ctx):
-        await ctx.send("https://discord.gg/9zSXyE9")
-
+    @commands.command(name  = "support-server")
+    async def support_server(self, ctx):
+        await ctx.send("https://discord.gg/vfvyjDA")
 
 
 def setup(bot):
