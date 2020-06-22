@@ -11,6 +11,7 @@ def make_csv(guild,type):
     if type == "text":
         df = pd.DataFrame(columns=['name', 'content', 'authorID'])
         df.to_csv(f"data/{type}/{guild}.csv", index=False)
+        df.to_
 
     elif type == "choice":
         df = pd.DataFrame(columns=['name', 'choices', 'authorID'])

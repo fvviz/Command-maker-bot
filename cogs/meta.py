@@ -22,6 +22,10 @@ class Meta(commands.Cog):
     async def support_server(self, ctx):
         await ctx.send("https://discord.gg/vfvyjDA")
 
+    @commands.command()
+    async def vote(self,ctx):
+        await ctx.send("https://top.gg/bot/717062311755513976/vote")
+
 
 def setup(bot):
     bot.add_cog(Meta(bot))
