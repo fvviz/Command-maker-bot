@@ -44,6 +44,7 @@ def launchBot(bot : commands.bot):
     bot.load_extension("cogs.help")
     bot.load_extension("cogs.owner")
     bot.load_extension("cogs.meta")
+    bot.load_extension("cogs.dblclient")
     bot.run(token)
 
 @bot.event
