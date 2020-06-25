@@ -1,9 +1,8 @@
 import pandas as pd
-import discord
-from discord.ext import commands
 import random
-import numpy
 from utils.helperFuncs import *
+
+
 def make_csv(guild,type):
 
 

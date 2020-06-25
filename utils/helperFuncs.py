@@ -1,8 +1,8 @@
-
 import requests
 import datetime
 import discord
 from discord.ext import commands
+
 color_dict = {
     "teal" : 0x1abc9c,
     "dark teal": 0x11806a,

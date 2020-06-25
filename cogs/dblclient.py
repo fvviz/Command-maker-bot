@@ -1,6 +1,5 @@
 import dbl
-import discord
-from discord.ext import commands , tasks
+from discord.ext import commands
 from setup import dbltoken
 import logging
 from utils.tokenMaker import TokenMaker

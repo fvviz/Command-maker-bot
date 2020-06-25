@@ -1,10 +1,7 @@
-from discord.ext import commands
-import discord
-import asyncio
 import math
 from bot import prefix
 from utils.commandMaker import *
-from utils.prefixMaker import PrefixMaker
+from utils.prefixMaker import PrefixHandler
 
 class Help(commands.Cog, name="Help"):
     """Shows help for bot"""
@@ -86,12 +83,10 @@ class Help(commands.Cog, name="Help"):
                         elif name == "jishaku":
                             cats.append(f"jisaku")
 
-                preMaker = PrefixMaker(ctx.guild)
-
                 cust_prefix = None
 
-                if preMaker.has_custom_prefix():
-                    cust_prefix = preMaker.get_prefix()
+                if PrefixHandler.has_custom_prefix(ctx.guild.id):
+                    cust_prefix = PrefixHandler.get_prefix(ctx.guild.id)
 
                 if cust_prefix is None:
                     cust_prefix = f"No custom prefix has been set for this server , you can set one using cm-prefix <prefix>"

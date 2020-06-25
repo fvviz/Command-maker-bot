@@ -1,15 +1,14 @@
-from discord.ext import commands
 from utils.commandMaker import *
 import asyncio
-import platform
 from discord.ext.commands.cooldowns import BucketType
-import datetime
 import os
 from utils.helperFuncs import *
 import requests
 from bot import prefix
-from utils.prefixMaker import PrefixMaker
+from utils.prefixMaker import PrefixHandler
 from utils.tokenMaker import TokenMaker
+
+
 class Utility(commands.Cog):
 
     def __init__(self, bot):
@@ -966,17 +965,12 @@ To set them , type
         embed.set_thumbnail(url=ctx.guild.icon_url)
         await ctx.send(embed=embed)
 
-
-
-    @commands.command(cooldown_after_parsing = True)
+    @commands.command(cooldown_after_parsing=True)
     @commands.check(has_perms)
-    @commands.cooldown(3,86400,BucketType.guild)
-    async def prefix(self,ctx,prefix):
-
-        prefixMaker = PrefixMaker(ctx.guild)
-        prefixMaker.add_prefix(author=ctx.author,prefix=prefix)
-
-        await ctx.send(f"<:greenTick:596576670815879169>  | the prefix for **{ctx.guild.name}** has been to set to {prefix}")
+    @commands.cooldown(3, 86400, BucketType.guild)
+    async def prefix(self, ctx, new_prefix):
+        PrefixHandler.add_prefix(author=ctx.author, guild_id=ctx.guild.id, prefix=new_prefix)
+        await ctx.send(f"<:greenTick:596576670815879169>  | the prefix for **{ctx.guild.name}** has been to set to {new_prefix}")
 
 
 
