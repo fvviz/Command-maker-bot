@@ -1,15 +1,14 @@
-from discord.ext import commands
 from utils.commandMaker import *
 import asyncio
-import platform
 from discord.ext.commands.cooldowns import BucketType
-import datetime
 import os
 from utils.helperFuncs import *
 import requests
 from bot import prefix
 from utils.prefixMaker import PrefixHandler
 from utils.tokenMaker import TokenMaker
+
+
 class Utility(commands.Cog):
 
     def __init__(self, bot):

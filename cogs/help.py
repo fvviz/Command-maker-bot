@@ -1,6 +1,3 @@
-from discord.ext import commands
-import discord
-import asyncio
 import math
 from bot import prefix
 from utils.commandMaker import *

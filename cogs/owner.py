@@ -1,8 +1,5 @@
 from discord.ext import commands
 import discord
-import asyncio
-import math
-
 
 
 class BotOwner(commands.Cog):
