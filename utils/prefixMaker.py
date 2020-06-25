@@ -1,94 +1,65 @@
-import pandas as pd
+from typing import Union
+
 import discord
+import pandas as pd
+
 
 def make_csv():
+    df = pd.DataFrame(columns=['guildID', 'prefix', 'authorID'])
+    df.to_csv(f"prefixes/prefixes.csv", index=False)
 
-        df = pd.DataFrame(columns=['guildID', 'prefix', 'authorID'])
-        df.to_csv(f"prefixes/prefixes.csv", index=False)
 
 def get_csv():
+    try:
+        pd.read_csv(f"prefixes/prefixes.csv")
+    except FileNotFoundError:
+        make_csv()
 
-        try:
-            pd.read_csv(f"prefixes/prefixes.csv")
-        except FileNotFoundError:
-            make_csv()
+    df = pd.read_csv(f"prefixes/prefixes.csv")
+    return df
 
-        df = pd.read_csv(f"prefixes/prefixes.csv")
-        return df
 
-class PrefixMaker():
+class PrefixHandler:
+    df = get_csv()
 
-    def __init__(self,guild):
+    @classmethod
+    def save(cls):
+        cls.df.to_csv(f"prefixes/prefixes.csv", index=False)
 
-        self.guildID = guild.id
-        self.df = get_csv()
-
-    def save(self):
-        self.df.to_csv(f"prefixes/prefixes.csv" , index=False)
-
-    def add_prefix(self,author: discord.Member,prefix):
-
-        df = self.df
-
-        if not self.guildID in df.guildID.values:
+    @classmethod
+    def add_prefix(cls, author: discord.Member, guild_id: int, prefix: str):
+        if guild_id not in cls.df.guildID.values:
 
             print("if not self.guildID in df.guildID.values:")
-            new_row = {     "guildID" : self.guildID,
-                            "prefix" : prefix,
-                            "authorID" : author.id}
+            new_row = {
+                "guildID": guild_id,
+                "prefix": prefix,
+                "authorID": author.id
+            }
 
-            self.df = self.df.append(new_row,ignore_index=True)
+            # TODO why overwrite it?
+            cls.df = cls.df.append(new_row, ignore_index=True)
             print("appended")
-            self.save()
+            cls.save()
         else:
             print("else")
-            guild_row = df[df.guildID == int(self.guildID)]
-
+            guild_row = cls.df[cls.df.guildID == guild_id]
             guild_row.prefix.values[0] = prefix
+            cls.df[cls.df.guildID == guild_id] = guild_row
+            cls.save()
 
-            self.df[self.df.guildID == int(self.guildID)] = guild_row
-            self.save()
-
-
-
-
-    def get_prefix(self):
-
+    @classmethod
+    def get_prefix(cls, guild_id: int) -> Union[str, None]:
         prefix = None
-        df = self.df
-
 
         try:
-                guild_row = df[df.guildID == int(self.guildID)]
-                prefix = guild_row.prefix.values[0]
+            guild_row = cls.df[cls.df.guildID == guild_id]
+            prefix = guild_row.prefix.values[0]
         except:
             pass
 
-        if prefix is not None:
-            return prefix
-        else:
-            return None
+        return prefix
 
-    def has_custom_prefix(self):
-
-        df = self.df
-
-        return self.guildID in df.guildID.values
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @classmethod
+    def has_custom_prefix(cls, guild_id: int) -> bool:
+        return guild_id in cls.df.guildID.values

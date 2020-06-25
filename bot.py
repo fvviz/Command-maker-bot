@@ -1,28 +1,22 @@
 import discord
 from discord.ext import commands
-from utils.commandMaker import CommandMaker
-import os
 from setup import token
 from utils.runner import run
-from utils.prefixMaker import PrefixMaker
+from utils.prefixMaker import PrefixHandler
 from utils.helperFuncs import guildinfo
 
 prefix = "cm-"
+prefix_list = ("cm-", "<@!717062311755513976> ")
 
-async def get_pre(bot, message):
 
-
-  prefix_list = ["cm-","<@!717062311755513976> "]
-
-  preMaker = PrefixMaker(message.guild)
-  if preMaker.has_custom_prefix():
-      prefix = preMaker.get_prefix()
-      if prefix is not None:
-           prefix_list.append(prefix)
-  else:
-      pass
-
-  return prefix_list
+async def get_pre(_, message):
+    guild_id = message.guild.id
+    if PrefixHandler.has_custom_prefix(guild_id):
+        guild_prefix = PrefixHandler.get_prefix(guild_id)
+        if guild_prefix is not None:
+            return (*prefix_list, guild_prefix)
+    else:
+        return prefix_list
 
 
 bot = commands.Bot(command_prefix=get_pre)
