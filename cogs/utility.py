@@ -9,6 +9,7 @@ from utils.helperFuncs import *
 import requests
 from bot import prefix
 from utils.prefixMaker import PrefixMaker
+from utils.tokenMaker import TokenMaker
 class Utility(commands.Cog):
 
     def __init__(self, bot):
@@ -168,8 +169,10 @@ For a step by step guide on making commands
     async def text_error(self, ctx, error):
 
         if isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(
-                f":x: | Only 3 text commands can be made in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+
+            tokenmaker = TokenMaker(ctx.author)
+
+            await reset_timer(ctx = ctx,command_name="make text",bot=self.bot,tokenmaker=tokenmaker,error = error,rate_limit=3)
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"bruh you aint even specifying {error.param}")
@@ -178,8 +181,14 @@ For a step by step guide on making commands
     async def choice_error(self, ctx, error):
 
         if isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(
-                f":x: | Only 3 text commands can be made in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+            tokenmaker = TokenMaker(ctx.author)
+
+            await reset_timer(ctx = ctx,
+                              command_name="make text",
+                              bot = self.bot,
+                              tokenmaker=tokenmaker,
+                              error = error,
+                              rate_limit=  3)
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"bruh you aint even specifying {error.param}")
@@ -462,7 +471,9 @@ To set them , type
     async def name_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
             await ctx.send(
-                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+                f"""
+:x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**
+""")
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"bruh you aint even specifying {error.param}")

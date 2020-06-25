@@ -1,12 +1,9 @@
 import dbl
 import discord
 from discord.ext import commands , tasks
-import os
 from setup import dbltoken
 import logging
-import asyncio
-from utils.voteLister import Votelister
-
+from utils.tokenMaker import TokenMaker
 
 class TopGG(commands.Cog):
     """Handles interactions with the top.gg API"""
@@ -14,50 +11,49 @@ class TopGG(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.token = dbltoken
-        self.dbl = dbl.DBLClient(self.bot, self.token, autopost=True)
+        self.dblpy = dbl.DBLClient(self.bot,
+                                   self.token,
+                                   webhook_path='/dblwebhook',
+                                   webhook_auth='loliamtesting',
+                                   webhook_port=5000)
 
 
-    @tasks.loop(minutes=30.0)
-    async def update_stats(self):
-        """This function runs every 30 minutes to automatically update your server count"""
-        logger.info('Attempting to post server count')
-        try:
-            await self.dblpy.post_guild_count()
-            logger.info('Posted server count ({})'.format(self.dblpy.guild_count()))
-        except Exception as e:
-            logger.exception('Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
         # if you are not using the tasks extension, put the line below
+
+    @commands.Cog.listener()
+    async def on_dbl_test(self, data):
+        print(data)
 
 
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):
 
+        print("vote testing")
+
         memberID = data["user"]
 
+        print(f"got vote from {memberID}")
+
         member = self.bot.get_user(int(memberID))
+        print(member.name)
         await member.send(f"""
 Hey!Thanks for the vote :heart: :100:
+You now have one extra token :moneybag: 
 Please do this every now and then :heart:
 Enjoy making commands using me!""")
 
-        lister = Votelister()
-        lister.add_voter(member)
-
-    @tasks.loop(minutes=10)
-    async def clear_voters(self):
-
-        lister = Votelister()
-        lister.clear_votes()
-
-        owner = self.bot.get_user(247292930346319872)
-        await owner.send("cleared voters")
+        tokenmaker = TokenMaker(member)
+        tokenmaker.add_token()
 
 
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        await self.dblpy.post_guild_count()
 
-
-
-
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        await self.dblpy.post_guild_count()
 
 
 

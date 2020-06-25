@@ -2,7 +2,7 @@
 import requests
 import datetime
 import discord
-
+from discord.ext import commands
 color_dict = {
     "teal" : 0x1abc9c,
     "dark teal": 0x11806a,
@@ -34,6 +34,49 @@ def get_content_type(url):
 def dhm(td: datetime.timedelta):
         return f"{td.seconds // 3600} hours , {(td.seconds // 60) % 60} minutes"
 
+async def reset_timer(ctx,bot : commands.Bot,command_name,tokenmaker,error,rate_limit):
+    tokens = tokenmaker.tokens
+
+    if tokens < 1:
+        await ctx.send(
+            f"""
+
+:x: | Only {rate_limit} commands can be made in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**
+Upvote the bot to reset the timer 
+
+            """)
+    else:
+        await ctx.send(f"""
+
+    :x: Only {rate_limit} commands can be made in an hour
+    You currently have **{tokens} token(s)** remaining , do you want spend one to reset the timer? `(y/n)`
+    *You can earn more tokens by upvoting me* use **cm-vote**
+                    """)
+
+        def check(message):
+
+            if message.content in "yn":
+                if message.channel == ctx.channel:
+                    if message.author == ctx.author:
+                        return True
+
+                    else:
+                        return False
+
+                else:
+                    return False
+            else:
+                return False
+
+        input = await bot.wait_for("message", check=check, timeout=30)
+
+        if input.content == "y":
+            bot.get_command(command_name).reset_cooldown(ctx)
+            await input.add_reaction("<:greenTick:596576670815879169>")
+
+        else:
+
+            await input.add_reaction("❌")
 
 async def guildinfo(guild,channel):
 

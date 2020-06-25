@@ -28,15 +28,11 @@ async def get_pre(bot, message):
 bot = commands.Bot(command_prefix=get_pre)
 game = discord.Game(name=f'cm-help')
 
+
 @bot.event
 async def on_ready():
     print('ready')
     await bot.change_presence(status=discord.Status.do_not_disturb, activity=game)
-
-
-
-
-
 
 def launchBot(bot : commands.bot):
     bot.load_extension("cogs.utility")
@@ -96,7 +92,6 @@ Head over to the manual to see more examples
     await logchannel.send(f"<a:sufisheep:718395610549452901> We have officially reached our **{len(bot.guilds)}th** server <a:sufisheep:718395610549452901>")
     await guildinfo(guild,logchannel)
 
-
 @bot.event
 async def on_command_error(ctx,error):
 
@@ -111,7 +106,5 @@ async def on_command_error(ctx,error):
 
     else:
         pass
-
-
 
 launchBot(bot)
