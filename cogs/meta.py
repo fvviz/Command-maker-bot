@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.utils import oauth_url
 
 
 class Meta(commands.Cog):
@@ -10,8 +11,20 @@ class Meta(commands.Cog):
     @commands.command()
     async def invite(self, ctx):
 
+        bot_invite = oauth_url("717062311755513976", discord.Permissions(
+            read_messages=True,
+            send_messages=True,
+            send_tts_messages=True,
+            embed_links=True,
+            read_message_history=True,
+            mention_everyone=True,
+            external_emojis=True,
+            attach_files=True,
+            add_reactions=True,
+            manage_messages=True
+        ))
         embed = discord.Embed(title = f"Click here to invite me to your server",
-                              url = "https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336",
+                              url = bot_invite
                               color = discord.Color.dark_blue())
 
         embed.set_thumbnail(url  = self.bot.user.avatar_url)
