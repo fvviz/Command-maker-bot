@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 from utils.helperFuncs import *
-
+import json
 
 def make_csv(guild,type):
 
@@ -18,6 +18,12 @@ def make_csv(guild,type):
     elif type == "embed":
         df = pd.DataFrame(columns=['name', 'title','description','color','footer','footerurl','thumbnailurl','author_name','author_url','image_url','authorID'])
         df.to_csv(f"data/{type}/{guild}.csv", index=False)
+
+    elif type == "ce":
+        df = pd.DataFrame(
+            columns=['name','code','authorID'])
+        df.to_csv(f"data/{type}/{guild}.csv", index=False)
+
 
     else:
         raise Exception("Type has to be either text, choice or embed")
@@ -51,10 +57,13 @@ class CommandMaker():
         self.text_df = get_csv(self.guildname,"text")
         self.choice_df = get_csv(self.guildname,"choice")
         self.embed_df = get_csv(self.guildname,"embed")
+        self.ce_df = get_csv(self.guildname,"ce")
 
         self.text_commands = self.text_df.name.tolist()
         self.choice_commands = self.choice_df.name.tolist()
         self.embed_commands = self.embed_df.name.tolist()
+        self.ce_commands = self.ce_df.name.tolist()
+
 
 
         self.type  = type
@@ -63,7 +72,7 @@ class CommandMaker():
 
 
 
-        commandlist = self.text_commands + self.choice_commands + self.embed_commands
+        commandlist = self.text_commands + self.choice_commands + self.embed_commands + self.ce_commands
         self.commandlist = commandlist
         self.commands = ""
         for command in commandlist:
@@ -79,6 +88,8 @@ class CommandMaker():
         textdf = get_csv(self.guildname,"text")
         choicedf = get_csv(self.guildname,"choice")
         embeddf = get_csv(self.guildname,"embed")
+        cedf = get_csv(self.guildname,"ce")
+
 
         botcommands = []
         for command in self.bot.commands:
@@ -91,6 +102,9 @@ class CommandMaker():
             return True
 
         elif name in embeddf.name.values:
+            return True
+
+        elif name in cedf.name.values:
             return True
 
         elif name in botcommands:
@@ -157,6 +171,17 @@ class CommandMaker():
         self.df = df.append(newRow,ignore_index = True)
         self.save()
 
+    def create_ce_command(self,name,author:discord.Member,code):
+
+
+        df = self.df
+        newRow = {'name': name,
+                  'code': code ,
+                  'authorID' : author.id}
+
+
+        self.df = df.append(newRow,ignore_index = True)
+        self.save()
 
 
     def make_choice_command(self,name,author:discord.Member,choices):
@@ -365,7 +390,7 @@ class CommandMaker():
 
 
 
-    def run_text_command(self,name):
+    def run_text_command(self,name,ctx):
 
 
 
@@ -375,10 +400,34 @@ class CommandMaker():
             commandRow = df[df.name == name]
             content = commandRow.content
 
-            return content.values[0]
+            output = get_syntax(ctx,content.values[0])
+
+            return output
+
+
         else:
 
             raise Exception("command not found")
+
+
+    def run_ce_command(self,name):
+
+        df = self.df
+
+        if name in df.name.values:
+            print("name in names")
+            commandRow = df[df.name == name]
+            code = commandRow.code.values[0]
+            embed = exec_embed(code)
+
+            return embed
+
+
+        else:
+            print("name not available")
+
+            raise Exception("command not found")
+
 
 
     def run_choice_command(self,name):
@@ -393,7 +442,6 @@ class CommandMaker():
             choice = random.choice(choicelist)
 
             return choice
-
         else:
             raise Exception("command not found")
 

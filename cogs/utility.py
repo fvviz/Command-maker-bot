@@ -7,7 +7,7 @@ import requests
 from bot import prefix
 from utils.prefixMaker import PrefixHandler
 from utils.tokenMaker import TokenMaker
-
+from utils.runner import exec
 
 class Utility(commands.Cog):
 
@@ -44,7 +44,7 @@ For a step by step guide on making commands
     async def text(self, ctx, name, *, content):
         guild = ctx.guild
 
-        msg = await ctx.send(f"<a:loading:718075868345532466> | Checking availability of command  `{name}`")
+
         try:
             pd.read_csv(f"data/text/{guild.id}.csv")
         except FileNotFoundError:
@@ -54,29 +54,25 @@ For a step by step guide on making commands
 
         if commandMaker.does_command_exist(name):
             await asyncio.sleep(2)
-            await msg.edit(content=":x: | A command with that name already exists")
+            await ctx.send(":x: | A command with that name already exists")
 
         else:
 
             if len(name) < 12:
                 if name.startswith("@") or name.startswith("<"):
-                    await msg.edit(":x: | command names cant start with `@` or `<`")
+                    await ctx.send(":x: | command names cant start with `@` or `<`")
                 else:
 
-                    await asyncio.sleep(2)
-                    await msg.edit(content=f"<:greenTick:596576670815879169> | command **{name}** available ")
-                    msg2 = await ctx.send(f"<a:loading:718075868345532466> | creating command **{name}**")
-
+                    await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** available ",delete_after = 5)
                     commandMaker.create_text_command(name, ctx.author,
                                                      await commands.clean_content().convert(ctx, content))
 
-                    await asyncio.sleep(2)
 
-                    await msg2.edit(content="<:greenTick:596576670815879169>  | command created ")
+                    await ctx.send(content="<:greenTick:596576670815879169>  | command created ")
 
 
             else:
-                await msg.edit(
+                await ctx.send(
                     content=f"{ctx.author.mention} bruh dat command name be af long doe , try making it shorter maybe?")
 
     @make.command(cooldown_after_parsing = True)
@@ -84,7 +80,6 @@ For a step by step guide on making commands
     async def choice(self, ctx, name, *, choices):
         guild = ctx.guild
 
-        msg = await ctx.send(f"<a:loading:718075868345532466> | Checking availability of command  `{name}`")
         try:
             pd.read_csv(f"data/choice/{guild.id}.csv")
         except FileNotFoundError:
@@ -94,21 +89,19 @@ For a step by step guide on making commands
 
         if commandMaker.does_command_exist(name):
             await asyncio.sleep(2)
-            await msg.edit(content=":x: | A command with that name already exists")
+            await ctx.send(":x: | A command with that name already exists")
         else:
 
             print("made it till here")
 
             if len(name) < 12:
                 if name.startswith("@") or name.startswith("<"):
-                    await msg.edit(":x: | command names cant start with `@` or `<`")
+                    await ctx.send(":x: | command names cant start with `@` or `<`")
                 else:
                     await asyncio.sleep(2)
-                    await msg.edit(content=f"<:greenTick:596576670815879169> | command **{name}** available ")
+                    await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** available ")
 
                     if "/" in choices:
-                        msg2 = await ctx.send(f"<a:loading:718075868345532466> | creating command **{name}**")
-
                         choices = await commands.clean_content().convert(ctx, choices)
                         print(choices)
                         choicelist = choices.split("/")
@@ -116,17 +109,15 @@ For a step by step guide on making commands
                         if len(choicelist) > 1:
 
                             commandMaker.make_choice_command(name, ctx.author, choices)
-                            await asyncio.sleep(2)
-                            await msg2.edit(content=f"<:greenTick:596576670815879169> | command **{name}** created")
+                            await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** created")
                         else:
-                            await msg2.edit(content=f":x: | bruh you can't just have one choice , try adding more")
+                            await ctx.send(content=f":x: | bruh you can't just have one choice , try adding more")
 
                     else:
                         await ctx.send("Choices must be separated by / ,To learn more about choice commands head over to \nhttps://docs.command-maker.ml/command-types/choice-commands")
 
             else:
-                        await msg.edit(
-                            content=f"{ctx.author.mention} bruh dat command name be af long doe , try making it shorter maybe?")
+                        await ctx.send(f"{ctx.author.mention} bruh dat command name be af long doe , try making it shorter maybe?")
 
 
 
@@ -134,8 +125,6 @@ For a step by step guide on making commands
     @make.command(name = "embed",cooldown_after_parsing = True)
     async def embed(self,ctx,name,*,description):
         guild = ctx.guild
-
-        msg = await ctx.send(f"<a:loading:718075868345532466> | Checking availability of command  `{name}`")
         try:
             pd.read_csv(f"data/choice/{guild.id}.csv")
         except FileNotFoundError:
@@ -144,18 +133,51 @@ For a step by step guide on making commands
         commandMaker = CommandMaker("embed", guild, self.bot)
 
         if commandMaker.does_command_exist(name):
-            await asyncio.sleep(2)
-            await msg.edit(content=":x: | A command with that name already exists")
+            await ctx.send(":x: | A command with that name already exists")
 
         else:
-            await asyncio.sleep(2)
-            await msg.edit(content=f"<:greenTick:596576670815879169> | command **{name}** available ")
-            msg2 = await ctx.send(f"<a:loading:718075868345532466> | creating command **{name}**")
+            await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** available",delete_after =2)
 
             commandMaker.make_embed_command(name,ctx.author,description = description)
+            await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** created")
 
-            await asyncio.sleep(2)
-            await msg2.edit(content=f"<:greenTick:596576670815879169> | command **{name}** created")
+
+
+    @make.command()
+    async def ce(self,ctx,name,*,code):
+
+        guild = ctx.guild
+        try:
+            pd.read_csv(f"data/ce/{guild.id}.csv")
+        except FileNotFoundError:
+            make_csv(guild.id, "ce")
+
+        commandMaker = CommandMaker('ce', guild, self.bot)
+
+        if commandMaker.does_command_exist(name):
+            await ctx.send(":x: | A command with that name already exists")
+
+        else:
+
+            if len(name) < 12:
+                if name.startswith("@") or name.startswith("<"):
+                    await ctx.send(":x: | command names cant start with `@` or `<`")
+                else:
+
+                    await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** available ", delete_after=5)
+
+                    try:
+                        ec = json.loads(code)
+
+
+
+
+
+                        commandMaker.create_ce_command(name, ctx.author, code)
+                        await ctx.send(content="<:greenTick:596576670815879169>  | command created ")
+
+                    except ValueError:
+                        await ctx.send("the provided code does not seem to be valid")
 
 
     @make.error
@@ -336,13 +358,11 @@ Before editing an embed , make sure you make it using
 
         if commandMaker.embed_command_exists(name):
             if does_color_exist(color):
-                     msg2 = await ctx.send(f"<a:loading:718075868345532466> | setting color of embed command **{name}** to `{color}`")
+                     msg2 = await ctx.send(f"<a:loading:718075868345532466> | setting color of embed command `{name}` to `{color}`")
                      commandMaker.modfiy_embed_color(ctx.author, name, color)
 
-                     await ctx.send("modfied")
-
                      await asyncio.sleep(2)
-                     await msg2.edit(content=f"<:greenTick:596576670815879169> | changed color of embed command **{name}** to {color}")
+                     await msg2.edit(content=f"<:greenTick:596576670815879169> | changed color of embed command `{name}` to `{color}`")
             else:
 
 
@@ -379,7 +399,7 @@ Before editing an embed , make sure you make it using
             if len(title) < 256:
 
                 msg2 = await ctx.send(
-                    f"<a:loading:718075868345532466> | setting title of embed command **{name}**")
+                    f"<a:loading:718075868345532466> | setting title of embed command `{name}`")
                 commandMaker.add_title(ctx.author, name, title)
                 await asyncio.sleep(2)
                 await msg2.edit(
@@ -399,9 +419,8 @@ Before editing an embed , make sure you make it using
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"bruh you aint even specifying {error.param}")
 
-        if isinstance(error, commands.CommandInvokeError):
+        if isinstance(error, Exception):
 
-            if str(error.original) == "You are not the owner of that command":
                 await ctx.send(":x: | you don't seem to be the owner of that command")
 
     @edit_embed.group()
@@ -481,11 +500,6 @@ To set them , type
 
             if str(error.original) == "You are not the owner of that command":
                 await ctx.send(":x: | you don't seem to be the owner of that command")
-
-
-
-
-
 
 
 
@@ -729,7 +743,7 @@ To set them , type
         else:
 
             await ctx.send(
-                "too bad , command does not seem to exist , make the command first and then add titles using this command")
+                "too bad , command does not seem to exist , make the command first and then add thumbnail using this command")
 
     @thumbnail.error
     async def thumbnail_error(self, ctx, error):
@@ -744,6 +758,23 @@ To set them , type
 
             if str(error.original) == "You are not the owner of that command":
                 await ctx.send(":x: | you don't seem to be the owner of that command")
+
+    @commands.command()
+    async def em(self, ctx, *, code):
+        print(code)
+
+        try:
+
+            embed_code = json.loads(code)
+            embed = discord.Embed.from_dict(embed_code)
+            await ctx.send(embed=embed)
+
+        except ValueError:
+            print("error")
+
+
+
+
 
     @commands.command(aliases=["commmandauthor"])
     async def commandinfo(self, ctx, command):
@@ -885,25 +916,7 @@ To set them , type
 
     @commands.command()
     async def run(self, ctx, name):
-
-            print(ctx.message.content)
-            try:
-                commandMaker = CommandMaker("text", ctx.guild, self.bot)
-                output = commandMaker.run_text_command(name)
-                await ctx.send(output)
-            except Exception:
-
-                print(f"{Exception}")
-
-                try:
-                    commandMaker = CommandMaker("choice", ctx.guild, self.bot)
-                    output = commandMaker.run_choice_command(name)
-                    await ctx.send(output)
-                except Exception:
-                    print(f"{Exception}")
-                    commandMaker = CommandMaker("embed", ctx.guild, self.bot)
-                    output = commandMaker.run_embed_command(name)
-                    await ctx.send(embed = output)
+        await exec(ctx=ctx, name=name, bot=self.bot)
 
 
 

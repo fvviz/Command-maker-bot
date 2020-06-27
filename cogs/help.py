@@ -76,13 +76,6 @@ class Help(commands.Cog, name="Help"):
 
                         elif name == "Meta":
                             cats.append(f"🛠️ **{name} Commands**")
-
-
-
-
-                        elif name == "jishaku":
-                            cats.append(f"jisaku")
-
                 cust_prefix = None
 
                 if PrefixHandler.has_custom_prefix(ctx.guild.id):

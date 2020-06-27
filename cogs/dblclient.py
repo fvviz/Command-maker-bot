@@ -2,7 +2,7 @@ import dbl
 from discord.ext import commands
 from setup import dbltoken
 import logging
-from utils.tokenMaker import TokenMaker
+#from utils.tokenMaker import TokenMaker
 
 class TopGG(commands.Cog):
     """Handles interactions with the top.gg API"""
@@ -42,8 +42,8 @@ You now have one extra token :moneybag:
 Please do this every now and then :heart:
 Enjoy making commands using me!""")
 
-        tokenmaker = TokenMaker(member)
-        tokenmaker.add_token()
+        #tokenmaker = TokenMaker(member)
+        #tokenmaker.add_token()
 
 
     @commands.Cog.listener()

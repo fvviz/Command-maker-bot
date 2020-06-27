@@ -2,6 +2,7 @@ import requests
 import datetime
 import discord
 from discord.ext import commands
+import json
 
 color_dict = {
     "teal" : 0x1abc9c,
@@ -15,6 +16,37 @@ color_dict = {
     "magenta": 0xe91e63,
     "dark magenta":0xad1457,
 }
+
+
+def get_syntax(ctx,content):
+
+
+
+    syntax_dict = {
+
+        "<author>" : ctx.author,
+        "<author-name>" : ctx.author.name,
+        "<author-mention>" : ctx.author.mention,
+        "<member-count>"  : ctx.guild.member_count,
+        "<author-pfp>" : ctx.author.avatar_url
+    }
+
+
+    for i in list(syntax_dict.keys()):
+            if i in content:
+                content=content.replace(i,str(syntax_dict[i]))
+
+                print(f"{i} --> {syntax_dict[i]}")
+            else:
+                pass
+
+
+
+    return content
+
+
+
+
 
 def does_color_exist(color):
     if color in color_dict:
@@ -30,6 +62,31 @@ def get_color(name):
 
 def get_content_type(url):
     return requests.head(url).headers['Content-Type']
+
+
+def is_image(url):
+
+    type = get_content_type(url)
+
+    if str(type).startswith("image"):
+        return True
+    else:
+        return False
+
+
+
+
+def exec_embed(code):
+        print(code)
+
+        try:
+            embed_code = json.loads(code)
+            embed = discord.Embed.from_dict(embed_code)
+            return embed
+
+        except ValueError:
+            print("error")
+
 
 def dhm(td: datetime.timedelta):
         return f"{td.seconds // 3600} hours , {(td.seconds // 60) % 60} minutes"

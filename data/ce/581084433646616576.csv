@@ -1,0 +1,66 @@
+name,code,authorID
+testy,"{
+  ""plainText"": ""hello"",
+  ""title"": ""test"",
+  ""color"": 53380
+}",247292930346319872
+tester,"{
+  ""plainText"": ""Lol i am basically just testing out lmao thi\nis too sex"",
+  ""url"": ""onon"",
+  ""color"": 431075,
+  ""footer"": {
+    ""text"": ""oba saan""
+  },
+  ""fields"": [
+    {
+      ""name"": ""lol bryuh"",
+      ""value"": ""hnifbief"",
+      ""inline"": true
+    },
+    {
+      ""name"": ""ok"",
+      ""value"": ""ok"",
+      ""inline"": true
+    }
+  ]
+}",247292930346319872
+testee,"{
+  ""plainText"": ""Lol i am basically just testing out lmao thi\nis too sex"",
+  ""url"": ""onon"",
+  ""color"": 431075,
+  ""fields"": [
+    {
+      ""name"": ""lol bryuh"",
+      ""value"": ""hnifbief"",
+      ""inline"": true
+    },
+    {
+      ""name"": ""ok"",
+      ""value"": ""ok"",
+      ""inline"": true
+    }
+  ]
+}",247292930346319872
+testr,"{
+  ""plainText"": ""Lol i am basically just testing out lmao thi\nis too sex"",
+  ""color"": 431075,
+  ""footer"": {
+    ""text"": ""oba saan""
+  },
+  ""fields"": [
+    {
+      ""name"": ""lol bryuh"",
+      ""value"": ""hnifbief"",
+      ""inline"": true",247292930346319872
+testo,"{
+  ""plainText"": ""testing some thing i hope it works out"",
+  ""description"": ""test"",
+  ""color"": 53380,
+  ""fields"": [
+    {
+      ""name"": ""test"",
+      ""value"": ""test"",
+      ""inline"": true
+    }
+  ]
+}",247292930346319872
