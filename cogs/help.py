@@ -10,9 +10,18 @@ class Help(commands.Cog, name="Help"):
         self.client = client
 
 
+
+
     @commands.command(hidden=True)
     async def help(self, ctx, cog=None):
         """Shows help message."""
+
+        cust_prefix = None
+        if PrefixHandler.has_custom_prefix(ctx.guild.id):
+            cust_prefix = PrefixHandler.get_prefix(ctx.guild.id)
+
+        if cust_prefix is None:
+            cust_prefix = prefix
 
         bot_av = self.client.get_user(717062311755513976).avatar_url
 
@@ -60,22 +69,23 @@ class Help(commands.Cog, name="Help"):
                             if command.hidden:
                                 pass
                             else:
-                                cmdname_modified = f"`{command.name}`  "
+                                cmdname_modified = f"`{cust_prefix}{command.name}`  "
                                 shown_commands.append(cmdname_modified)
-
-
-
-
                         cmds = "".join(shown_commands)
                         subtext.append(cmds)
 
 
-                        if name == "Utility":
-                            cats.append(f"🛠️ **{name} Commands**")
+                        cog_dict = {
+                            "Utility" : "🛠️ **Utility Commands**",
+                            "Meta" : "🛠️ **Meta Commands**",
+                            "Configs" : "⚙ **Configs**",
+                            "Info" : "❓ **Info**"
+                        }
+
+                        if name in cog_dict.keys():
+                            cats.append(cog_dict[name])
 
 
-                        elif name == "Meta":
-                            cats.append(f"🛠️ **{name} Commands**")
                 cust_prefix = None
 
                 if PrefixHandler.has_custom_prefix(ctx.guild.id):
@@ -96,7 +106,7 @@ class Help(commands.Cog, name="Help"):
 
 **:pencil: __Usage__**
 To make your own commands, 
-Use command `{prefix}make <command-type> <command-name-here> <content>`
+Use command `{cust_prefix}make <command-type> <command-name-here> <content>`
 
 **:pencil: __Available Command Types__**
 *click on a particular command type to learn more about*
@@ -104,14 +114,6 @@ Use command `{prefix}make <command-type> <command-name-here> <content>`
 • [`text`](https://docs.command-maker.ml/command-types/text-commands)
 • [`choice`](https://docs.command-maker.ml/command-types/text-commands)
 • [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
-
-**:pencil: __Making a simple command__**
-**Example** : `{prefix}make text hi hi`
-This should make a command called 'hi'
-now you can use `{prefix}hi` anytime and the bot will respond hi
-
-To get a list of custom commands in your server,use
-`cm-commands`
 
 Head over to the manual to see more examples
 [**`📝 Read the manual 📝`** ](https://docs.command-maker.ml/)
@@ -196,29 +198,8 @@ Head over to the manual to see more examples
 
 
 
-                    if cogg.qualified_name == "moderation":
+                    if cogg.qualified_name == "":
                         cogname = f"**{cogg.qualified_name}**    <:rooCop:596577110982918146> \n"
-
-                    if cogg.qualified_name == "fun":
-                        cogname = f"**{cogg.qualified_name}**    <:haha:613185229653409883> \n"
-
-                    if cogg.qualified_name == "music":
-                        cogname = f"**{cogg.qualified_name}**    <:FeelsBeatsMan:597591202614738947>  \n"
-
-                    if cogg.qualified_name == "leveling":
-                        cogname = f"**{cogg.qualified_name}**    <:vv:597590298964656169>  \n"
-
-                    if cogg.qualified_name == "games":
-                        cogname = f"**{cogg.qualified_name}**    :video_game: \n"
-
-                    if cogg.qualified_name == "other":
-                        cogname = f"**{cogg.qualified_name}**    <:rooEZSip:596577108675788800>  \n"
-
-                    if cogg.qualified_name == "reddit":
-                        cogname = f"**{cogg.qualified_name}**    <:reddit:711990234736361566> \n"
-
-
-
 
 
 
@@ -251,7 +232,7 @@ Head over to the manual to see more examples
                                 params.append(p)
                             for p in params:
                                 pr += " <" + p + ">"
-                            desc += "**Syntax** : `" + cmd.name + pr + "`\n"
+                            desc += f"**Syntax** : `{cust_prefix}" + cmd.name + pr + "`\n"
 
                         aliases = cmd.aliases
 
@@ -270,8 +251,7 @@ Head over to the manual to see more examples
                                     pr = ""
                                     for p in scmd.clean_params:
                                         pr += "<" + p + "> "
-                                    desc += "`" + cmd.name + " " + scmd.name + " " + pr + "`\n"
-
+                                    desc += f"{cust_prefix}`" + cmd.name + " " + scmd.name + " " + pr + "`\n"
 
                         except:
                             pass

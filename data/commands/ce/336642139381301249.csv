@@ -1,0 +1,102 @@
+name,code,authorID
+rules,"{
+  ""title"": ""Rules"",
+  ""description"": ""dont be gay"",
+  ""author"": {
+    ""name"": ""danny""
+  },
+  ""color"": 53380,
+  ""footer"": {
+    ""text"": ""any individual found being gay will be banned""
+  }
+}",247292930346319872
+bruhh,"{
+  ""title"": ""Rules"",
+  ""description"": ""-dont be gay\n-cock pics are send\n-free download camel sex 2018 no virus \n"",
+  ""author"": {
+    ""name"": ""danny"",
+    ""icon_url"": ""https://cdn.discordapp.com/avatars/80088516616269824/39ec2502115271c24eb969018fcd8b55.png?size=1024""
+  },
+  ""color"": 53380,
+  ""footer"": {
+    ""text"": ""any individual found being gay will be banned""
+  },
+  ""thumbnail"": ""https://cdn.discordapp.com/icons/336642139381301249/3aa641b21acded468308a37eef43d7b3.webp?size=1024"",
+  ""fields"": [
+    {
+      ""name"": """",
+      ""value"": """",
+      ""inline"": true
+    }
+  ]
+}",247292930346319872
+bruhhh,"{
+  ""title"": ""Rules"",
+  ""description"": ""dont be gay\n-cock pics are send\n-free download camel sex 2018 no virus \n"",
+  ""author"": {
+    ""name"": ""danny"",
+    ""icon_url"": ""https://cdn.discordapp.com/avatars/80088516616269824/39ec2502115271c24eb969018fcd8b55.png?size=1024""
+  },
+  ""color"": 53380,
+  ""footer"": {
+    ""text"": ""any individual found being gay will be banned""
+  },
+  ""thumbnail"": ""https://cdn.discordapp.com/icons/336642139381301249/3aa641b21acded468308a37eef43d7b3.webp?size=1024"",
+  ""fields"": [
+    {
+      ""name"": "" bruh"",
+      ""value"": ""bruh"",
+      ""inline"": false
+    }
+  ]
+}",247292930346319872
+danny,"{
+  ""title"": ""Rules"",
+  ""description"": ""dont be gay\n-cock pics are send\n-free download camel sex 2018 no virus \n-only use discord.py"",
+  ""author"": {
+    ""name"": ""danny"",
+    ""icon_url"": ""https://cdn.discordapp.com/avatars/80088516616269824/39ec2502115271c24eb969018fcd8b55.png?size=1024""
+  },
+  ""color"": 53380,
+  ""footer"": {
+    ""text"": ""any individual found being gay will be banned""
+  },
+  ""thumbnail"": ""https://cdn.discordapp.com/icons/336642139381301249/3aa641b21acded468308a37eef43d7b3.webp?size=1024"",
+  ""image"": ""https://media.discordapp.net/attachments/381963689470984203/726744419084271666/generated.png"",
+  ""fields"": [
+    {
+      ""name"": "" bruh"",
+      ""value"": ""bruh"",
+      ""inline"": false
+    }
+  ]
+}",247292930346319872
+ui,"{
+  ""description"": ""full name : <author>\nUser Id : <author-id>\n"",
+  ""author"": {
+    ""name"": ""info about <author-name>"",
+    ""icon_url"": ""<author-av>""
+  },
+  ""color"": 431075
+}",247292930346319872
+ui2,"{
+  ""title"": ""info about <author-name>"",
+  ""description"": ""**full name** : <author>\n**User Id** : <author-id>\n**Nick name** : <author-nick>\n\n"",
+  ""color"": 431075,
+  ""thumbnail"": ""<author-av>""
+}",247292930346319872
+lol,"{
+  ""description"": ""nice embed <author-mention>"",
+  ""color"": 53380
+}",247292930346319872
+oo,"{
+  ""author"": {
+    ""name"": ""BRUHHHH <author-name> lmaoooooooo""
+  },
+  ""color"": 10027247
+}",247292930346319872
+bruh,"{
+  ""title"": ""no"",
+  ""description"": ""fuck you"",
+  ""color"": 53380
+}",723268667579826267

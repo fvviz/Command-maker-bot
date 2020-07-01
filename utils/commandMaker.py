@@ -3,26 +3,29 @@ import random
 from utils.helperFuncs import *
 import json
 
+
+folder = "data/commands"
+
 def make_csv(guild,type):
 
 
 
     if type == "text":
         df = pd.DataFrame(columns=['name', 'content', 'authorID'])
-        df.to_csv(f"data/{type}/{guild}.csv", index=False)
+        df.to_csv(f"{folder}/{type}/{guild}.csv", index=False)
 
     elif type == "choice":
         df = pd.DataFrame(columns=['name', 'choices', 'authorID'])
-        df.to_csv(f"data/{type}/{guild}.csv", index=False)
+        df.to_csv(f"{folder}/{type}/{guild}.csv", index=False)
 
     elif type == "embed":
         df = pd.DataFrame(columns=['name', 'title','description','color','footer','footerurl','thumbnailurl','author_name','author_url','image_url','authorID'])
-        df.to_csv(f"data/{type}/{guild}.csv", index=False)
+        df.to_csv(f"{folder}/{type}/{guild}.csv", index=False)
 
     elif type == "ce":
         df = pd.DataFrame(
             columns=['name','code','authorID'])
-        df.to_csv(f"data/{type}/{guild}.csv", index=False)
+        df.to_csv(f"{folder}/{type}/{guild}.csv", index=False)
 
 
     else:
@@ -31,11 +34,11 @@ def make_csv(guild,type):
 def get_csv(guild,type):
 
         try:
-            pd.read_csv(f"data/{type}/{guild}.csv")
+            pd.read_csv(f"{folder}/{type}/{guild}.csv")
         except:
             make_csv(guild,type)
 
-        df = pd.read_csv(f"data/{type}/{guild}.csv")
+        df = pd.read_csv(f"{folder}/{type}/{guild}.csv")
         return df
 
 
@@ -49,7 +52,7 @@ class CommandMaker():
         self.guildname = guild.id
 
         try:
-           pd.read_csv(f"data/{type}/{self.guildname}.csv")
+           pd.read_csv(f"{folder}/{type}/{self.guildname}.csv")
 
         except FileNotFoundError:
            make_csv(self.guildname,type)
@@ -67,7 +70,7 @@ class CommandMaker():
 
 
         self.type  = type
-        self.df =  pd.read_csv(f"data/{type}/{self.guildname}.csv")
+        self.df =  pd.read_csv(f"{folder}/{type}/{self.guildname}.csv")
         self.bot = bot
 
 
@@ -80,7 +83,7 @@ class CommandMaker():
 
     def save(self):
         type = self.type
-        self.df.to_csv(f"data/{type}/{self.guildname}.csv" , index=False)
+        self.df.to_csv(f"{folder}/{type}/{self.guildname}.csv" , index=False)
 
 
     def does_command_exist(self,name):
@@ -419,14 +422,52 @@ class CommandMaker():
             commandRow = df[df.name == name]
             code = commandRow.code.values[0]
             embed = exec_embed(code)
-
             return embed
+        else:
+            print("name not available")
 
+            raise Exception("command not found")
+
+    def get_ce_image(self,ctx,name,val):
+        df = self.df
+        if name in df.name.values:
+            print("name in names")
+            commandRow = df[df.name == name]
+            code = commandRow.code.values[0]
+            ec = json.loads(code)
+
+            if val in ec.keys():
+                content = get_img_syntax(ctx,ec[val])
+                ec[val] = content
+                return ec[val]
+            else:
+                pass
 
         else:
             print("name not available")
 
             raise Exception("command not found")
+
+    def get_ce_dict(self, ctx, name,val):
+        df = self.df
+        if name in df.name.values:
+            print("name in names")
+            commandRow = df[df.name == name]
+            code = commandRow.code.values[0]
+            ec = json.loads(code)
+
+            if val in ec.keys():
+                content = get_img_syntax(ctx, ec[val])
+                ec[val] = content
+                return ec[val]
+            else:
+                pass
+        else:
+            print("name not available")
+            raise Exception("command not found")
+
+
+
 
 
 

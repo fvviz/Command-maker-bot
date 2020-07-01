@@ -3,6 +3,9 @@ import datetime
 import discord
 from discord.ext import commands
 import json
+import codecs
+import os
+import pathlib
 
 color_dict = {
     "teal" : 0x1abc9c,
@@ -20,15 +23,17 @@ color_dict = {
 
 def get_syntax(ctx,content):
 
-
-
     syntax_dict = {
 
         "<author>" : ctx.author,
         "<author-name>" : ctx.author.name,
+        "<author-id>" : ctx.author.id,
+        "<author-nick>" : ctx.author.nick,
         "<author-mention>" : ctx.author.mention,
         "<member-count>"  : ctx.guild.member_count,
-        "<author-pfp>" : ctx.author.avatar_url
+        "<author-pfp>" : ctx.author.avatar_url,
+        "<author-av>" : ctx.author.avatar_url,
+        "<guild-icon>" : ctx.guild.icon_url
     }
 
 
@@ -44,8 +49,50 @@ def get_syntax(ctx,content):
 
     return content
 
+def linecount():
+    total = 0
+    file_amount = 0
+
+    for path, subdirs, files in os.walk('.'):
+        for name in files:
+            if name.endswith('.py'):
+                file_amount += 1
+                with codecs.open('./' + str(pathlib.PurePath(path, name)), 'r', 'utf-8') as f:
+                    for i, l in enumerate(f):
+                        if l.strip().startswith('#') or len(l.strip()) is 0:  # skip commented lines.
+                            pass
+                        else:
+                            total += 1
+
+    return total,file_amount
+
+def get_img_syntax(ctx,content):
+
+    syntax_dict = {
+        "<author-pfp>" : ctx.author.avatar_url,
+        "<author-av>" : ctx.author.avatar_url,
+        "<guild-icon>" : ctx.guild.icon_url
+    }
 
 
+    for i in list(syntax_dict.keys()):
+            if i in content:
+                content=content.replace(i,str(syntax_dict[i]))
+
+                print(f"{i} --> {syntax_dict[i]}")
+            else:
+                pass
+
+    return content
+
+def in_img_syntax(ctx,content):
+    syntax_dict = {
+        "<author-pfp>": ctx.author.avatar_url,
+        "<author-av>": ctx.author.avatar_url,
+        "<guild-icon>": ctx.guild.icon_url
+    }
+
+    return content in syntax_dict.keys()
 
 
 def does_color_exist(color):
@@ -58,6 +105,26 @@ def get_color(name):
         return color_dict[name]
     else:
         raise Exception("color not found")
+
+def bytes_format(bytes):
+    kb =  bytes/1000
+    mb = 0
+    gb = 0
+    val = f"{kb} KB"
+
+
+    if kb > 1000:
+        mb = round(kb/1000)
+        val = f"{mb} MB"
+
+    if mb > 1000:
+        gb = mb/1000
+        val = f"{gb} GB"
+
+    return val
+
+
+
 
 
 def get_content_type(url):
@@ -74,18 +141,210 @@ def is_image(url):
         return False
 
 
+def format_rr_message(ctx,ph):
+
+    if ph.has_perms_role():
+        role_id = ph.get_role()
+
+        print("role:",role_id)
+        role = ctx.guild.get_role(role_id)
+
+        content = f"*`only members with {role.name} role will be able to make commands`*"
+
+        return content
+
+    else:
+        return ""
+
+
+def bool_to_em(val:bool):
+    enabled = "<:enable:727107200958464060>"
+    disabled = "<:disable:727107239957102643>"
+
+    if val:
+        return enabled
+    else:
+        return disabled
 
 
 def exec_embed(code):
         print(code)
 
         try:
-            embed_code = json.loads(code)
+            embed_code = json.loads(code,strict = False)
+
+            removals = ["image","thumbnail","author","footer"]
+
+            for i in removals:
+                if i in embed_code.keys():
+                    embed_code.pop(i)
+
             embed = discord.Embed.from_dict(embed_code)
             return embed
 
         except ValueError:
             print("error")
+
+
+def check_embed(ec):
+
+    check_dict =    {
+        "author_icon" : True,
+        "image" : True,
+        "footer_icon" : True,
+        "thumbnail" : True
+    }
+
+    syntaxes = [ "<author-pfp>","<author-av>","<guild-icon>"]
+
+    if "author" in ec.keys():
+        ad = ec["author"]
+
+        if "icon_url" in ad.keys():
+
+            try:
+                if is_image(ad["icon_url"]):
+                    pass
+
+                elif ad["icon_url"] in syntaxes:
+                    pass
+
+                else:
+                    check_dict["author_icon"] = False
+
+            except requests.exceptions.MissingSchema:
+
+                if ad["icon_url"] in syntaxes:
+                    pass
+
+                else:
+                    check_dict["author_icon"] = False
+
+        else:
+            pass
+
+        if "image" in ec.keys():
+            try:
+
+                if is_image(ec["image"]):
+                    pass
+                elif ec["image"] in syntaxes:
+                    pass
+                else:
+                    check_dict["image"] = False
+            except:
+                if ec["image"] in syntaxes:
+                    pass
+
+                else:
+                    check_dict["image"] = False
+
+    if "thumbnail" in ec.keys():
+
+        try:
+            if is_image(ec["thumbnail"]):
+                pass
+
+            elif ec["thumbnail"] in syntaxes:
+                pass
+            else:
+                check_dict["thumbnail"] = False
+        except requests.exceptions.MissingSchema:
+
+            if ec["thumbnail"] in syntaxes:
+                pass
+            else:
+                 check_dict["thumbnail"] = False
+
+    if "footer" in ec.keys():
+
+        ad = ec["footer"]
+
+        if "icon_url" in ad.keys():
+
+            try:
+                if is_image(ad["icon_url"]):
+                    pass
+                elif ad["icon_url"] in syntaxes:
+                    pass
+                else:
+                    check_dict["footer_icon"] = False
+
+            except requests.exceptions.MissingSchema:
+
+                if ad["icon_url"] in syntaxes:
+                    pass
+
+                else:
+                    check_dict["footer_icon"] = False
+        else:
+            pass
+
+    return check_dict
+
+
+
+
+def process_embed(ctx,embed : discord.Embed,auth_dict = None,footer_dict = None):
+
+    new_embed = embed
+
+    try:
+       new_embed.title = get_syntax(ctx,embed.title)
+
+    except:
+        pass
+    try:
+       new_embed.description = get_syntax(ctx,embed.description)
+    except:
+        pass
+
+    if auth_dict is not None:
+
+        if "name" in auth_dict.keys():
+            auth_name = get_syntax(ctx,auth_dict["name"])
+
+            new_embed.set_author(name=auth_name)
+
+        if "icon_url" in auth_dict.keys():
+            auth_name = get_syntax(ctx, auth_dict["name"])
+            auth_icon_url = get_img_syntax(ctx, auth_dict["icon_url"])
+
+            embed.set_author(name=auth_name, icon_url=auth_icon_url)
+
+        if "url" in auth_dict.keys():
+            auth_name = get_syntax(ctx, auth_dict["name"])
+            auth_icon_url = get_img_syntax(ctx, auth_dict["icon_url"])
+            auth_url = get_syntax(ctx, auth_dict["url"])
+
+            new_embed.set_author(name=auth_name,
+                              icon_url=auth_icon_url,
+                              url=auth_url)
+
+        else:
+            pass
+
+    if footer_dict is not None:
+
+        if "text" in footer_dict.keys():
+            foot_text = get_syntax(ctx,footer_dict["text"])
+
+            new_embed.set_footer(text=foot_text)
+
+        if "icon_url" in footer_dict.keys():
+            foot_text = get_syntax(ctx,footer_dict["text"])
+            foot_icon_url = get_img_syntax(ctx, footer_dict["icon_url"])
+
+            new_embed.set_footer(text=foot_text, icon_url=foot_icon_url)
+        else:
+            pass
+
+
+
+    return new_embed
+
+
+
 
 
 def dhm(td: datetime.timedelta):

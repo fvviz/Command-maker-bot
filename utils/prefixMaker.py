@@ -3,19 +3,20 @@ from typing import Union
 import discord
 import pandas as pd
 
+pre_folder = "data/prefixes"
 
 def make_csv():
     df = pd.DataFrame(columns=['guildID', 'prefix', 'authorID'])
-    df.to_csv(f"prefixes/prefixes.csv", index=False)
+    df.to_csv(f"{pre_folder}s/prefixes.csv", index=False)
 
 
 def get_csv():
     try:
-        pd.read_csv(f"prefixes/prefixes.csv")
+        pd.read_csv(f"{pre_folder}/prefixes.csv")
     except FileNotFoundError:
         make_csv()
 
-    df = pd.read_csv(f"prefixes/prefixes.csv")
+    df = pd.read_csv(f"{pre_folder}/prefixes.csv")
     return df
 
 
@@ -24,7 +25,7 @@ class PrefixHandler:
 
     @classmethod
     def save(cls):
-        cls.df.to_csv(f"prefixes/prefixes.csv", index=False)
+        cls.df.to_csv(f"{pre_folder}/prefixes.csv", index=False)
 
     @classmethod
     def add_prefix(cls, author: discord.Member, guild_id: int, prefix: str):

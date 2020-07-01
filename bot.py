@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from setup import token
-from utils.runner import run
+from utils.runner import exec
 from utils.prefixMaker import PrefixHandler
 from utils.helperFuncs import guildinfo
 
@@ -19,13 +19,14 @@ async def get_pre(_, message):
         return prefix_list
 
 
-bot = commands.Bot(command_prefix=get_pre)
+bot = commands.AutoShardedBot(command_prefix=get_pre,shard_count = 2)
 game = discord.Game(name=f'cm-help')
 
 
 @bot.event
 async def on_ready():
     print('ready')
+
     await bot.change_presence(status=discord.Status.do_not_disturb, activity=game)
 
 def launchBot(bot : commands.bot):
@@ -35,8 +36,13 @@ def launchBot(bot : commands.bot):
     bot.load_extension("cogs.owner")
     bot.load_extension("cogs.meta")
     bot.load_extension("cogs.dblclient")
+    bot.load_extension("cogs.configs")
+    bot.load_extension("cogs.infos")
+    bot.load_extension("jishaku")
     bot.run(token)
 
+
+'''
 @bot.event
 async def on_guild_join(guild : discord.Guild):
 
@@ -85,6 +91,7 @@ Head over to the manual to see more examples
 
     await logchannel.send(f"<a:sufisheep:718395610549452901> We have officially reached our **{len(bot.guilds)}th** server <a:sufisheep:718395610549452901>")
     await guildinfo(guild,logchannel)
+'''
 
 @bot.event
 async def on_command_error(ctx,error):
@@ -95,10 +102,14 @@ async def on_command_error(ctx,error):
 
         command = ctx.invoked_with
 
-        await run(ctx = ctx,name=command,bot=bot)
+        await exec(ctx = ctx,name=command,bot=bot)
 
 
     else:
         pass
+        
+        
+
+
 
 launchBot(bot)
