@@ -1,274 +1,288 @@
-import math
-from bot import prefix
-from utils.commandMaker import *
-from utils.prefixMaker import PrefixHandler
-
-class Help(commands.Cog, name="Help"):
-    """Shows help for bot"""
-
-    def __init__(self, client):
-        self.client = client
+import discord
+from discord.ext import commands
+from utils.helperFuncs import *
 
 
+class NewHelp(commands.HelpCommand):
 
+    async def send_bot_help(self, mapping):
 
-    @commands.command(hidden=True)
-    async def help(self, ctx, cog=None):
-        """Shows help message."""
+        ctx = self.context
+        prefix = self.clean_prefix
+        cog_dict = {
+            "Utility": "🛠️ **Utility Commands**",
+            "Meta": "📪 **Meta Commands**",
+            "Configs": "⚙ **Configs**",
+            "Info": "❓ **Info**"
+        }
 
-        cust_prefix = None
-        if PrefixHandler.has_custom_prefix(ctx.guild.id):
-            cust_prefix = PrefixHandler.get_prefix(ctx.guild.id)
+        bot = ctx.bot
 
-        if cust_prefix is None:
-            cust_prefix = prefix
+        cogs = []
 
-        bot_av = self.client.get_user(717062311755513976).avatar_url
+        cogCommands = []
 
-        color = discord.Color.dark_blue()
+        for cogname in bot.cogs:
 
-        nextbtn = "⏩"
-        prevbtn = "⏪"
-        valids = [nextbtn, prevbtn]
+            cog = bot.get_cog(cogname)
 
-        if cog is None:
-            desc = ""
-            cats = []
-            cogs = []
-            subtext = []
-            page = 0
+            visible_cmds = []
 
-            for cog in self.client.cogs:
-                cogs.append(cog)
+            for command in cog.get_commands():
+                if not command.hidden:
+                    visible_cmds.append(command.name)
 
-            pages = math.ceil(len(cogs) / 7)
-            while True:
-                use = cogs[page * 7:(page * 7) + 6]
-                for cog in cogs:
-                    cog = self.client.get_cog(cog)
-                    commands = cog.get_commands()
-                    shown_commands = []
-                    for command in commands:
-                        if command.hidden:
-                            pass
-                        else:
-                            shown_commands.append(command)
+            if len(visible_cmds) > 0:
+                cogs.append(cogname)
 
-                    if len(shown_commands) > 0:
-                        if cog.__doc__ is None:
-                            doc = "No description"
-                        else:
-                            doc = cog.__doc__
+        for cogname in cogs:
 
-                        name = cog.qualified_name
-                        commands = cog.get_commands()
+            cog = bot.get_cog(cogname)
 
-                        shown_commands = []
+            commands = cog.get_commands()
+            cleanedcmds = ""
 
-                        for command in commands:
-                            if command.hidden:
-                                pass
-                            else:
-                                cmdname_modified = f"`{cust_prefix}{command.name}`  "
-                                shown_commands.append(cmdname_modified)
-                        cmds = "".join(shown_commands)
-                        subtext.append(cmds)
+            for command in commands:
+                if not command.hidden:
+                    cleanedcmds += f"`{prefix}{command}` "
 
+            cogCommands.append(cleanedcmds)
 
-                        cog_dict = {
-                            "Utility" : "🛠️ **Utility Commands**",
-                            "Meta" : "🛠️ **Meta Commands**",
-                            "Configs" : "⚙ **Configs**",
-                            "Info" : "❓ **Info**"
-                        }
+        embed = discord.Embed(
+            title="Command Maker bot",
+            color=discord.Color.dark_blue(),
+            timestamp=ctx.message.created_at,
+            url="https://docs.command-maker.ml/"
+        )
 
-                        if name in cog_dict.keys():
-                            cats.append(cog_dict[name])
+        embed.set_thumbnail(url=bot.user.avatar_url)
 
+        embed.description = f"""
 
-                cust_prefix = None
+<:rooBless:597589960270544916> ***Invite me to your server - [Click here](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)***
+📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+📰 ***Check out the latest news ({await get_last_msg_date(bot)}) - [Click here]({await get_last_msg(bot)})***
 
-                if PrefixHandler.has_custom_prefix(ctx.guild.id):
-                    cust_prefix = PrefixHandler.get_prefix(ctx.guild.id)
-
-                if cust_prefix is None:
-                    cust_prefix = f"No custom prefix has been set for this server , you can set one using cm-prefix <prefix>"
-
-
-                desc += f"""
-
-[`Invite to your server`](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)
-
-**Command maker** is a bot with which you can make your own commands. Yes , **your own commands**  
-
-:pencil2: **Universal prefix** : `{prefix}`
-:pencil2: **Guild custom prefix** : `{cust_prefix}`
-
-**:pencil: __Usage__**
-To make your own commands, 
-Use command `{cust_prefix}make <command-type> <command-name-here> <content>`
-
-**:pencil: __Available Command Types__**
-*click on a particular command type to learn more about*
-
-• [`text`](https://docs.command-maker.ml/command-types/text-commands)
-• [`choice`](https://docs.command-maker.ml/command-types/text-commands)
-• [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
-
-Head over to the manual to see more examples
-[**`📝 Read the manual 📝`** ](https://docs.command-maker.ml/)
-
+```
+Listed below are some of the in-built commands
+Do {prefix}help <command> for more help on a command
+```
                         """
-                embed = discord.Embed(
-                    title = "Command Maker bot",
-                    description=desc,
-                    color = color, #ctx.guild.get_member(577140178791956500).top_role.color,
-                    timestamp=ctx.message.created_at,
-                    url = "https://docs.command-maker.ml/"
-                )
 
+        for cog in cogs:
+            if cog in cog_dict.keys():
+                embed.add_field(name=cog_dict[cog], value=cogCommands[cogs.index(cog)], inline=False)
 
-                embed.set_thumbnail(url=bot_av)
+        owner = bot.get_user(247292930346319872)
+        embed.set_footer(text=f"Developer : {owner}", icon_url=owner.avatar_url)
 
-                for cat in cats:
+        await ctx.send(embed=embed)
 
-                  embed.add_field(name=cat,value=subtext[cats.index(cat)],inline=False)
+    async def send_cog_help(self, cog: commands.Cog):
 
-                owner = self.client.get_user(247292930346319872)
-                embed.set_footer(text = f"Created by {str(owner)}",icon_url=owner.avatar_url)
-                try:
-                    await msg.edit(embed=embed)
-                except:
-                    msg = await ctx.send(embed=embed)
+        ctx = self.context
+        prefix = self.clean_prefix
+        cog_dict = {
+            "Utility": "🛠️ **Utility Commands**",
+            "Meta": "📪 **Meta Commands**",
+            "Configs": "⚙ **Configs**",
+            "Info": "❓ **Info**"
+        }
 
-                def check(r, u):
-                    return (u.id == ctx.author.id) and ((r.message.id == msg.id) and r.emoji in valids)
+        bot = ctx.bot
 
-                try:
-                    r, u = await self.client.wait_for("reaction_add", timeout=60, check=check)
+        print(type(cog))
 
-                    if r.emoji == nextbtn:
-                        page += 1
-                        if page > pages - 1:
-                            page = pages - 1
-                        desc = ""
-                        cats  = ""
+        visible_cmds = []
 
+        for command in cog.get_commands():
+            if not command.hidden:
+                visible_cmds.append(command.name)
 
-                    elif r.emoji == prevbtn:
+        cleanedcmds = ""
 
-                        page -= 1
-                        if page < 0:
-                            page = 0
-                        desc = ""
-                        cats = ""
-
-
-
-
-                    try:
-                        await msg.remove_reaction(r.emoji, u)
-                    except:
-                        pass
-                except:
-                    try:
-                        await msg.clear_reactions()
-                        break
-                    except:
-                        pass
-                    break
+        for command in visible_cmds:
+            cleanedcmds += f"`{prefix}{command}` "
         else:
-            cogg = self.client.get_cog(cog)
-            if cogg is not None:
-                desc = ''
-                if cogg.__doc__ is not None:
-                    desc = cogg.__doc__ + "\n\n"
+            pass
 
-                shown_commands = []
+        embed = discord.Embed(title=cog_dict[cog.qualified_name],
+                              color=discord.Color.dark_blue())
 
-                for command in cogg.get_commands():
-                    if command.hidden:
-                        pass
-                    else:
-                        cmdname_modified = f"►**{command.name}**"
-                        shown_commands.append(cmdname_modified)
+        doc = cog.__doc__
 
-                if len(shown_commands) > 0:
-                    cmds = "\n".join(shown_commands)
+        if doc is None:
+            doc = "\n"
+
+        embed.description = f"""
+{doc}
+{cleanedcmds}
+
+"""
+        owner = bot.get_user(247292930346319872)
+        embed.set_footer(text=f"Developer : {owner}", icon_url=owner.avatar_url)
+
+        await ctx.send(embed=embed)
+
+    def get_command_signature(self, command):
+        if not command.signature and not command.parent:
+            return f"`{self.clean_prefix}{command}`"
+
+        if command.signature and not command.parent:
+            return f"`{self.clean_prefix}{command} {command.signature}`"
+
+        if not command.signature and command.parent:
+            return f"`{self.clean_prefix}{command.parent}`"
+
+        if command.signature and command.parent:
+            return f"`{self.clean_prefix}{command} {command.signature}`"
+
+    def get_command_aliases(self, command):
+        if command.aliases:
+            cleaned_aliases = ""
+
+            for aliase in command.aliases:
+                cleaned_aliases += f"`{aliase}` "
+        else:
+            return None
+
+    def get_command_docs(self, command):
+
+        if command.help:
+            return command.help
+        else:
+            return None
+
+    def get_command_help(self, command):
+
+        aliases = self.get_command_aliases(command)
+        docs = self.get_command_docs(command)
+        signature = self.get_command_signature(command)
+
+        if not aliases and not signature and not docs:
+            return " "
+        if aliases and signature and not docs:
+            return f"""
+**Usage Syntax** : {self.get_command_signature(command)}
+**Aliases**: {aliases}
+
+📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+"""
+        if not aliases and signature and not docs:
+            return f"""
+            **Usage Syntax** : {self.get_command_signature(command)}
+
+📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+"""
+        if not aliases and signature and docs:
+            return f"""
+{docs}
+
+**Usage Syntax** : {self.get_command_signature(command)}
+
+📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+"""
+        else:
+            return f"""
+            {docs}
+
+           **Aliases** : {aliases}
+            **Usage Syntax** : {self.get_command_signature(command)}
+
+            📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+            🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+"""
+
+    def get_sub_commands(self, group: commands.group):
+
+        subcmds = group.commands
+        cleaned_cmds = ""
+
+        for subcmd in subcmds:
+            cleaned_cmds += f"`{self.clean_prefix}{subcmd}` "
+
+        return cleaned_cmds
+
+    def get_group_help(self, group: commands.group):
+
+        aliases = self.get_command_aliases(group)
+        docs = self.get_command_docs(group)
+        subcmds = self.get_sub_commands(group)
+
+        if not aliases and not subcmds and not docs:
+            return " "
+        if aliases and subcmds and not docs:
+            return f"""
+        **Subcommands** : {subcmds}
+        **Aliases**: {aliases}
+
+        📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+        🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+        """
+        if not aliases and subcmds and not docs:
+            return f"""
+                    **Subcommands** : {subcmds}
+
+        📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+        🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+        """
+        if not aliases and subcmds and docs:
+            return f"""
+        {docs}
+
+        **Subcommands** : {subcmds}
 
 
+        📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+        🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+        """
 
-                    if cogg.qualified_name == "":
-                        cogname = f"**{cogg.qualified_name}**    <:rooCop:596577110982918146> \n"
+        else:
+            return f"""
+                    {docs}
+
+                    **Aliases** : {aliases}
+                    **Subcommands** : {subcmds}
+
+                    📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
+                    🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
+                    """
+
+    async def send_command_help(self, command: commands.Command):
+
+        ctx = self.context
+        bot = ctx.bot
+
+        embed = discord.Embed(title=f"{command}",
+                              url="https://docs.command-maker.ml/",
+                              color=discord.Color.dark_blue())
+        embed.set_thumbnail(url=bot.user.avatar_url)
+        embed.description = self.get_command_help(command)
+        await ctx.send(embed=embed)
+
+    async def send_group_help(self, group: commands.Group):
+
+        ctx = self.context
+        bot = ctx.bot
+
+        embed = discord.Embed(title=f"{group}",
+                              url="https://docs.command-maker.ml/",
+                              color=discord.Color.dark_blue())
+        embed.set_thumbnail(url=bot.user.avatar_url)
+        embed.description = self.get_group_help(group)
+        await ctx.send(embed=embed)
 
 
+class Help(commands.Cog):
 
-                    embed = discord.Embed(
-                        title=cogname,
-                        description=desc,
-                        color=color,
-                        timestamp=ctx.message.created_at
-                    )
-                    embed.set_thumbnail(url=bot_av)
-                    embed.add_field(name="**Commands**",value=cmds)
-
-
-                    await ctx.send(embed=embed)
-                else:
-                    await ctx.send("This command category is not available")
-            else:
-                cmd = self.client.get_command(cog)
-                if cmd is not None:
-                    if cmd.hidden is False:
-                        desc = ""
-                        try:
-                            desc += cmd.help + "\n"
-                        except:
-                            desc += "No description provided.\n"
-                        if len(cmd.clean_params) > 0:
-                            params = []
-                            pr = ""
-                            for p in cmd.clean_params:
-                                params.append(p)
-                            for p in params:
-                                pr += " <" + p + ">"
-                            desc += f"**Syntax** : `{cust_prefix}" + cmd.name + pr + "`\n"
-
-                        aliases = cmd.aliases
-
-                        if len(aliases) > 0:
-                            desc += "**Aliases** : " + ", ".join(aliases) + "\n"
-
-                        sub_cmds = []
-                        try:
-                            if len(cmd.commands) > 0:
-                                for scmd in cmd.commands:
-                                    sub_cmds.append(scmd)
-
-                            if len(sub_cmds) > 0:
-                                desc += "\n**Subcommands** : \n"
-                                for scmd in sub_cmds:
-                                    pr = ""
-                                    for p in scmd.clean_params:
-                                        pr += "<" + p + "> "
-                                    desc += f"{cust_prefix}`" + cmd.name + " " + scmd.name + " " + pr + "`\n"
-
-                        except:
-                            pass
-
-                        embed = discord.Embed(
-                            title=cmd.name,
-                            description=desc,
-                            color=color,
-                            timestamp=ctx.message.created_at
-                        )
-                        embed.set_thumbnail(url=bot_av)
-
-                        await ctx.send(embed=embed)
-                    else:
-                        await ctx.send("hidden.")
-                else:
-                    await ctx.send(f"No command found with the name `{cog}`.")
+    def __init__(self, bot):
+        self._original_help_command = bot.help_command
+        bot.help_command = NewHelp()
+        bot.help_command.cog = self
 
 
 def setup(bot):

@@ -219,146 +219,6 @@ class CommandMaker():
         self.save()
 
 
-    def modfiy_embed_color(self,author : discord.Member,name,color):
-
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.color.values[0] = str(color)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-    def add_title(self,author : discord.Member,name,title):
-
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.title.values[0] = str(title)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-
-
-    def add_thumbnail(self,author : discord.Member,name,url):
-
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.thumbnailurl.values[0] = str(url)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-    def add_author_text(self,author : discord.Member,name,authorname):
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.author_name.values[0] = str(authorname)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-    def add_author_url(self,author : discord.Member,name,url):
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.author_url.values[0] = str(url)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-    def add_footer_text(self, author: discord.Member, name, authorname):
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.footer.values[0] = str(authorname)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-
-    def add_footer_url(self,author : discord.Member,name,url):
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.footerurl.values[0] = str(url)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-    def add_desc(self, author: discord.Member, name, desc):
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.description.values[0] = str(desc)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-
-    def add_image(self, author: discord.Member, name, url):
-        df = self.df
-        cmdRow = df[df.name == name]
-
-        if cmdRow.authorID.values[0] == int(author.id):
-            cmdRow.image_url.values[0] = str(url)
-
-            df[df.name == name] = cmdRow
-            self.df = df
-            self.save()
-
-        else:
-            raise Exception("You are not the author of that command")
-
-
-
-
-
-
-
-
     def delete_command(self,author : discord.Member,name):
 
         df = self.df
@@ -389,6 +249,24 @@ class CommandMaker():
 
         else:
             raise Exception("You are not the owner of that command")
+
+
+    def edit_ce_command(self,name,author:discord.Member,code):
+
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.code.values[0] = code
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the owner of that command")
+
+
 
 
 

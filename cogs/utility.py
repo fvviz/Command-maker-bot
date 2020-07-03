@@ -25,6 +25,24 @@ class Utility(commands.Cog):
     @commands.group(aliases=["makecmd"])
     @commands.check(has_cm_perms)
     async def make(self, ctx):
+
+        """
+To make a command ,
+use `cm-make <command-type><command-name>`
+(`cm-` is the universal prefix , if you have a custom prefix set up,
+That is going to work as well )
+
+:pencil: **__Available Command Types__**
+
+Click on a particular command type
+to learn more about it
+• [`text`](https://docs.command-maker.ml/command-types/text-commands)
+• [`choice`](https://docs.command-maker.ml/command-types/choice-commands)
+• [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
+
+For a step by step guide on making commands
+[`Click here`](https://docs.command-maker.ml/)
+        """
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title = "Making command",
                                   color = discord.Color.dark_blue(),url="https://docs.command-maker.ml/")
@@ -51,6 +69,12 @@ For a step by step guide on making commands
     @make.command(cooldown_after_parsing = True)
     @commands.cooldown(3, 3600, BucketType.member)
     async def text(self, ctx, name, *, content):
+
+        """
+        A text command is a command that outputs some text when called
+        :pencil: ***Read the manual to learn more - [Click Here](https://docs.command-maker.ml/command-types/text-commands)***
+
+        """
         guild = ctx.guild
 
 
@@ -175,8 +199,25 @@ For a step by step guide on making commands
 
 
                         except ValueError:
-                            await ctx.send(f"the provided code does not seem to be valid : `{ValueError}`")
+                            await ctx.send(f"the provided code does not seem to be valid")
+                            embed = discord.Embed(color=discord.Color.dark_blue())
+                            prefix = get_custom_prefix(ctx,PrefixHandler)
+                            embed.title = "Making embeds"
 
+                            embed.description = f"""
+                                        In the latest update , A new system for creating embeds have been added.
+                                        You do not have to make make them using subcommands anymore . All you have to do is 
+
+                                        1) Head over to this [Website](https://embedbuilder.nadekobot.me/)
+                                        2) Generate json code
+                                        3) Copy it and then execute `{prefix}make embed <command-name> <code>`            
+                                        """
+
+                            embed.set_image(
+                                url="https://media.discordapp.net/attachments/726816340811186227/727843773505208401/unknown.png?width=1201&height=522")
+                            embed.set_thumbnail(url=self.bot.user.avatar_url)
+
+                            await ctx.send(embed=embed)
 
     @make.error
     async def make_error(self, ctx, error):
@@ -190,7 +231,29 @@ For a step by step guide on making commands
             await ctx.send(f"{ctx.author.mention} you are missing `{role_name}` role to make commands")
 
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"bruh you aint even specifying {error.param}")
+            await ctx.send(f"{ctx.author.mention} :danger:  **Missing Argument** {error.param}")
+
+
+    @embed.error
+    async def embed_error(self,ctx,error):
+
+        if isinstance(error,commands.MissingRequiredArgument):
+            embed = discord.Embed(color=discord.Color.dark_blue())
+            embed.title = "Making embeds"
+
+            embed.description = """
+            In the latest update , A new system for creating embeds has been added.
+            You do not have to make make them using subcommands anymore . All you have to do is 
+            
+            1) Head over to this [Website](https://embedbuilder.nadekobot.me/)
+            2) Generate json code
+            3) Copy it and then execute `cm-make embed <command-name> <code>`            
+            """
+
+            embed.set_image(url="https://media.discordapp.net/attachments/726816340811186227/727843773505208401/unknown.png?width=1201&height=522")
+            embed.set_thumbnail(url=self.bot.user.avatar_url)
+            await ctx.send(embed=embed)
+
 
     @text.error
     async def text_error(self, ctx, error):
@@ -319,6 +382,61 @@ For a step by step guide on making commands
 
             if str(error.original) == "You are not the owner of that command":
                 await ctx.send(":x: | you don't seem to be the owner of that command")
+
+    @edit.command(name="embed", cooldown_after_parsing=True)
+    @commands.cooldown(3, 3600, BucketType.member)
+    async def embed_edit(self, ctx, name,*,code):
+        guild = ctx.guild
+
+        try:
+            pd.read_csv(f"{folder}/ce/{guild.id}.csv")
+        except FileNotFoundError:
+            make_csv(guild=guild, type="ce")
+        commandMaker = CommandMaker("ce", guild, self.bot)
+
+        if commandMaker.custom_command_exists(name):
+            await asyncio.sleep(2)
+
+            await ctx.send(content=f"<:greenTick:596576670815879169> | command **{name}** exists",delete_after=2)
+
+            try:
+
+                ec = json.loads(code)
+
+                check_dict = check_embed(ec)
+
+                if not check_dict["author_icon"]:
+                    await ctx.send("the provided url for author icon did not seem to be a valid image")
+                if not check_dict["image"]:
+                    await ctx.send("the provided url for image did not seem to be a valid image")
+
+                if not check_dict["thumbnail"]:
+                    await ctx.send("the provided url for thumbnail did not seem to be a valid image")
+
+                if not check_dict["footer_icon"]:
+                    await ctx.send("the provided url for footer icon did not seem to be a valid image")
+
+                else:
+                    commandMaker.edit_ce_command(name, ctx.author, code)
+
+                await ctx.send(
+                    content=f"<:greenTick:596576670815879169> | **command `{name}` edited successfully**")
+
+            except Exception as error:
+                await asyncio.sleep(2)
+                await ctx.send(content=f":x: | **checks failed** : `{error}`")
+
+        elif commandMaker.does_command_exist(name):
+            await asyncio.sleep(2)
+            await ctx.send(content=f":x: | **Nice try , But Built-in commands cannot be edited**")
+
+        else:
+            await asyncio.sleep(2)
+            await ctx.send(content=f":x: | **Command does not exist**",delete_after = 2)
+
+
+
+
 
     @commands.command()
     async def simple_embed(self, ctx, *, code):

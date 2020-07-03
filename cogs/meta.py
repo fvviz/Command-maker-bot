@@ -24,7 +24,7 @@ class Meta(commands.Cog):
             manage_messages=True
         ))
         embed = discord.Embed(title = f"Click here to invite me to your server",
-                              url = bot_invite
+                              url = bot_invite,
                               color = discord.Color.dark_blue())
 
         embed.set_thumbnail(url  = self.bot.user.avatar_url)

@@ -8,6 +8,6 @@
 
 **A discord bot which lets you make your own commands**
 
-Please try to run an instance of this bot , It can be quite hard if you have no experience. The easiest way would be to invite it to your server . Do `cm-invite` or just [**__click here__**](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)
+Please try not to run an instance of this bot , It can be quite hard if you have no experience. The easiest way would be to invite it to your server . Do `cm-invite` or just [**__click here__**](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)
 
 

@@ -31,7 +31,6 @@ async def on_ready():
 
 def launchBot(bot : commands.bot):
     bot.load_extension("cogs.utility")
-    bot.remove_command("help")
     bot.load_extension("cogs.help")
     bot.load_extension("cogs.owner")
     bot.load_extension("cogs.meta")
@@ -42,7 +41,7 @@ def launchBot(bot : commands.bot):
     bot.run(token)
 
 
-'''
+
 @bot.event
 async def on_guild_join(guild : discord.Guild):
 
@@ -91,7 +90,8 @@ Head over to the manual to see more examples
 
     await logchannel.send(f"<a:sufisheep:718395610549452901> We have officially reached our **{len(bot.guilds)}th** server <a:sufisheep:718395610549452901>")
     await guildinfo(guild,logchannel)
-'''
+
+
 
 @bot.event
 async def on_command_error(ctx,error):
@@ -108,8 +108,6 @@ async def on_command_error(ctx,error):
     else:
         pass
         
-        
-
 
 
 launchBot(bot)

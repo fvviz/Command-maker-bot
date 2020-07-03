@@ -50,6 +50,17 @@ class PrefixHandler:
             cls.save()
 
     @classmethod
+    def remove_prefix(cls,guild_id : int):
+        if guild_id not in cls.df.guildID.values:
+            pass
+        else:
+
+            cls.df = cls.df[cls.df.guildID != guild_id]
+            cls.save()
+
+
+
+    @classmethod
     def get_prefix(cls, guild_id: int) -> Union[str, None]:
         prefix = None
 

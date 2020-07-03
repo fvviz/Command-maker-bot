@@ -40,14 +40,63 @@ def get_syntax(ctx,content):
     for i in list(syntax_dict.keys()):
             if i in content:
                 content=content.replace(i,str(syntax_dict[i]))
-
-                print(f"{i} --> {syntax_dict[i]}")
             else:
                 pass
 
-
-
     return content
+
+def get_custom_prefix(ctx,PrefixHandler):
+    cust_prefix = None
+
+    if PrefixHandler.has_custom_prefix(ctx.guild.id):
+        cust_prefix = PrefixHandler.get_prefix(ctx.guild.id)
+
+    if cust_prefix is None:
+
+        cust_prefix = "cm-"
+
+    return cust_prefix
+
+def format_date(join_date: datetime.datetime):
+    today = datetime.date.today()
+    days = join_date.date() - today
+    year = int(days.days / 365)
+    remaining_days = days.days % 25
+
+    if year == 0:
+        return f"{join_date.day} {join_date.strftime('%B')},{join_date.year}"
+
+    return f"{join_date.day} {join_date.strftime('%B')},{join_date.year}"
+
+async def get_last_msg_date(bot):
+
+    channel = bot.get_channel(717638909281959966)
+    last = await channel.fetch_message(channel.last_message_id)
+    return format_date(last.created_at)
+
+
+async def get_last_msg(bot):
+
+    channel = bot.get_channel(717638909281959966)
+    last = await channel.fetch_message(channel.last_message_id)
+    return last.jump_url
+
+
+
+
+
+
+
+
+
+
+def convert(seconds):
+    seconds = seconds % (24 * 3600)
+    hour = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+
+    return f"{int(hour)} hour(s) , {int(minutes)} minute(s)"
 
 def linecount():
     total = 0

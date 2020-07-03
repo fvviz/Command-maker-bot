@@ -8,10 +8,14 @@ import psutil
 import git
 class Info(commands.Cog):
 
+    """
+    Informational commands
+    """
+
     def __init__(self,bot):
         self.bot = bot
 
-    @commands.command(name="command list", aliases=["showcommands", "cmds"])
+    @commands.command(name="command-list", aliases=["showcommands", "cmds"])
     async def _commands(self, ctx):
 
         guild = ctx.guild
