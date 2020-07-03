@@ -40,9 +40,7 @@ to learn more about it
 • [`choice`](https://docs.command-maker.ml/command-types/choice-commands)
 • [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
 
-For a step by step guide on making commands
-[`Click here`](https://docs.command-maker.ml/)
-        """
+"""
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title = "Making command",
                                   color = discord.Color.dark_blue(),url="https://docs.command-maker.ml/")
@@ -72,8 +70,11 @@ For a step by step guide on making commands
 
         """
         A text command is a command that outputs some text when called
-        :pencil: ***Read the manual to learn more - [Click Here](https://docs.command-maker.ml/command-types/text-commands)***
+        This command is used to make a text command.
+        It takes 2 arguments
 
+        1) name - name of the command you want to make
+        2) content - the content of your command
         """
         guild = ctx.guild
 
@@ -111,6 +112,18 @@ For a step by step guide on making commands
     @make.command(cooldown_after_parsing = True)
     @commands.cooldown(3, 3600, BucketType.member)
     async def choice(self, ctx, name, *, choices):
+        """
+
+        Choice commands are commands that outputs choices that are provided when the command was made, An example of a choice command would be an Magic 8Ball command
+
+        This command takes in 3 arguments
+        • name - the name of the command that you want to make
+        • choices - a set of choices to pick from
+
+        Note that **choices** have to be separated with /
+        `example` - `cm-make ask yes/no`
+
+        """
         guild = ctx.guild
 
         try:
@@ -155,6 +168,21 @@ For a step by step guide on making commands
 
     @make.command()
     async def embed(self,ctx,name,*,code):
+
+        """
+        This command is used to make custom embed commands.
+
+        It takes 2 arguments
+        1) name - name of your command
+        2) code - the json code for the embed
+
+        In the latest update , A new system for creating embeds have been added.
+        You do not have to make make them using subcommands anymore All you have to do is
+
+        1) Head over to this [Website](https://embedbuilder.nadekobot.me/)
+        2) Generate json code
+        3) Copy it and then execute this command
+        """
 
         guild = ctx.guild
         try:
@@ -287,6 +315,20 @@ For a step by step guide on making commands
     @commands.group()
     #@commands.cooldown(3, 3600, BucketType.member)
     async def edit(self, ctx):
+
+        """
+To edit a command,
+use {prefix}edit <command-type> <content>
+
+:pencil: **__Available Command Types__**
+Click on a particular command type
+to learn more about it
+
+• [`text`](https://docs.command-maker.ml/command-types/text-commands#editing-text-commands)
+• [`choice`](https://docs.command-maker.ml/command-types/choice-commands#making-choice-commands)
+• [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
+
+        """
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Editing commands",
                                   color=discord.Color.dark_blue(),
@@ -305,8 +347,6 @@ to learn more about it
 
 For a step by step guide on making commands
 [`Click here`](https://docs.command-maker.ml/) 
-
-
 
 """
             embed.set_thumbnail(url=self.bot.user.avatar_url)
@@ -332,6 +372,14 @@ For a step by step guide on making commands
     @edit.command(name = "text",cooldown_after_parsing = True)
     @commands.cooldown(3, 3600, BucketType.member)
     async def text_edit(self,ctx,name,*,content):
+        """
+        This command is used to edit text commands
+        It takes 3 arguments
+
+        1) name - the name of the command that you want to make
+        2) content - the new content
+
+        """
         guild = ctx.guild
 
         msg = await ctx.send(f"<a:loading:718075868345532466> | Checking availability of command  `{name}`")
@@ -386,6 +434,17 @@ For a step by step guide on making commands
     @edit.command(name="embed", cooldown_after_parsing=True)
     @commands.cooldown(3, 3600, BucketType.member)
     async def embed_edit(self, ctx, name,*,code):
+        """
+        This command used to edit commands.
+        It takes 2 arguments.
+
+        1) name - the name of the command which you want to edit
+        2) code - the json code of the embed
+
+        :tools:  ***Want to generate json code for your embed ? Its easy - [Click here](https://embedbuilder.nadekobot.me/)**
+
+        """
+
         guild = ctx.guild
 
         try:
@@ -438,7 +497,7 @@ For a step by step guide on making commands
 
 
 
-    @commands.command()
+    @commands.command(hidden = True)
     async def simple_embed(self, ctx, *, code):
         print(code)
 
@@ -453,6 +512,12 @@ For a step by step guide on making commands
 
     @commands.command(aliases=["commmandauthor"])
     async def commandinfo(self, ctx, command):
+
+        """
+        Shows information about a command . This includes command type and the command author
+        This command takes 1 argument and that is the name of that command
+
+        """
 
         guild = ctx.guild
         author = ""
@@ -534,6 +599,9 @@ For a step by step guide on making commands
     @commands.command(aliases=["resetcmds", "nukeall"])
     @commands.check(has_perms)
     async def nukecommands(self, ctx):
+        """
+        Deletes all custom commands from a server , `Administrator` permissions are required to execute this
+        """
         msg = await ctx.send(f"<a:loading:718075868345532466> | nuking **{ctx.guild.name}** custom commands")
 
         try:
@@ -569,6 +637,10 @@ For a step by step guide on making commands
 
     @commands.command(aliases=["deletecmd", "remove"])
     async def delete(self, ctx, command):
+        """
+        This command is used to delete a custom command.
+        It takes 1 argument and that is name of the command that you want to delete
+        """
 
         guild = ctx.guild
 
@@ -625,7 +697,7 @@ For a step by step guide on making commands
             else:
                 pass
 
-    @commands.command()
+    @commands.command(hidden = True)
     async def run(self, ctx, name):
         await exec(ctx=ctx, name=name, bot=self.bot)
 

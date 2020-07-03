@@ -10,6 +10,9 @@ class Meta(commands.Cog):
 
     @commands.command()
     async def invite(self, ctx):
+        """
+        Sends an invite link
+        """
 
         bot_invite = oauth_url("717062311755513976", discord.Permissions(
             read_messages=True,
@@ -33,6 +36,7 @@ class Meta(commands.Cog):
 
     @commands.command(name  = "support-server")
     async def support_server(self, ctx):
+
         await ctx.send("https://discord.gg/vfvyjDA")
 
     @commands.command()

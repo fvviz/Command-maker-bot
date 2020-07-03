@@ -31,6 +31,20 @@ class Configs(commands.Cog):
 
     @commands.group(aliases= ["perms"])
     async def permissions(self,ctx):
+        """
+        This command is used to control who can make commands . This works by
+        only allowing members with a specific role to make commands. More information
+        can be found in the manual (link below) . But to simply
+
+        Do `cm-perms set <some-role>` to set permissions ( cm- is the universal prefix , if you
+        have a custom prefix set up , that will work too)
+
+        You will require administrator permissions to set permissions
+
+        All the subcommands are mentioned below , Use the help command on the
+        subcommands to learn more . (Better way would be to just read the manual)
+
+        """
 
         prefix = get_custom_prefix(ctx,PrefixHandler)
 
