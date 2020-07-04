@@ -150,6 +150,8 @@ Do {prefix}help <command> for more help on a command
     def get_command_docs(self, command):
 
         if command.help:
+            if "{prefix}" in command.help:
+                command.help = command.help.replace("{prefix}",self.clean_prefix)
             return command.help
         else:
             return None
@@ -216,6 +218,7 @@ Do {prefix}help <command> for more help on a command
         if not aliases and not subcmds and not docs:
             return " "
         if aliases and subcmds and not docs:
+            print(1)
             return f"""
         **Subcommands** : {subcmds}
         **Aliases**: {aliases}
@@ -224,6 +227,7 @@ Do {prefix}help <command> for more help on a command
         🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
         """
         if not aliases and subcmds and not docs:
+            print(2)
             return f"""
                     **Subcommands** : {subcmds}
 
@@ -231,17 +235,21 @@ Do {prefix}help <command> for more help on a command
         🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
         """
         if not aliases and subcmds and docs:
+            print(3)
             return f"""
-        {docs}
 
+        {docs}
+        
         **Subcommands** : {subcmds}
+
 
 
         📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
         🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
         """
 
-        else:
+        if aliases and subcmds and docs:
+            print(4)
             return f"""
                     {docs}
 

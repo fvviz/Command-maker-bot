@@ -102,8 +102,9 @@ class Info(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases = ["botinfo"])
     async def about(self,ctx):
+
 
         embed = discord.Embed(color=discord.Color.dark_blue())
 

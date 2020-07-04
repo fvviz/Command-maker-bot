@@ -71,15 +71,15 @@ def format_date(join_date: datetime.datetime):
 async def get_last_msg_date(bot):
 
     channel = bot.get_channel(717638909281959966)
-    last = await channel.fetch_message(channel.last_message_id)
-    return format_date(last.created_at)
+    last = await channel.history(limit = 1).flatten()
+    return format_date(last[0].created_at)
 
 
 async def get_last_msg(bot):
 
     channel = bot.get_channel(717638909281959966)
-    last = await channel.fetch_message(channel.last_message_id)
-    return last.jump_url
+    last = await channel.history(limit = 1).flatten()
+    return last[0].jump_url
 
 
 

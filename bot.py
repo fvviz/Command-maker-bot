@@ -107,7 +107,7 @@ async def on_command_error(ctx,error):
 
     else:
         pass
-        
+
 
 
 launchBot(bot)

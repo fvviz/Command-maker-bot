@@ -29,20 +29,17 @@ class Configs(commands.Cog):
         else:
             return False
 
-    @commands.group(aliases= ["perms"])
+    @commands.group(name="permissions",aliases= ["perms"])
     async def permissions(self,ctx):
         """
-        This command is used to control who can make commands . This works by
-        only allowing members with a specific role to make commands. More information
-        can be found in the manual (link below) . But to simply
+        This command is used to control who can make commands .
+        This works by only allowing members with a specific role to make commands.
+        More information can be found in the manual (link below) . But to simply
 
-        Do `cm-perms set <some-role>` to set permissions ( cm- is the universal prefix , if you
-        have a custom prefix set up , that will work too)
+        Do `{prefix}perms set <some-role>` to set permissions
+        You will require **`administrator`** permissions to set permissions
 
-        You will require administrator permissions to set permissions
-
-        All the subcommands are mentioned below , Use the help command on the
-        subcommands to learn more . (Better way would be to just read the manual)
+        All the subcommands are mentioned below , Use the {prefix}help on the subcommands to learn more . (Better way would be to just read the manual)
 
         """
 
@@ -105,6 +102,17 @@ class Configs(commands.Cog):
 
     @commands.group(aliases = ["pre"])
     async def prefix(self,ctx):
+        """
+        Want to set a custom prefix for your server?
+        You can do buy invoking the `{prefix}set` command
+
+        An example would be `{prefix}set \`.
+        Now the prefix for your server is `\`
+
+        Commands can now be invoked with `\`
+        📝 Read the docs for more examples and info (link below)
+
+        """
 
         if ctx.invoked_subcommand is None:
             embed= discord.Embed(color = discord.Color.dark_blue(),
@@ -114,10 +122,12 @@ class Configs(commands.Cog):
             embed.set_thumbnail(url=self.bot.user.avatar_url)
 
             prefix = get_custom_prefix(ctx,PrefixHandler)
+
             embed.description =f"""
+            The current prefix for {ctx.guild.name} is {prefix}
             You can do by invoking
             `{prefix}prefix set <prefix>`
-            `{prefix}prefix remove`
+            
             """
             embed.set_footer(icon_url=ctx.guild.icon_url,text=f"current prefix is {prefix}")
             await ctx.send(embed=embed)
@@ -126,6 +136,13 @@ class Configs(commands.Cog):
     @commands.check(has_perms)
     @commands.cooldown(3, 86400, BucketType.guild)
     async def set_(self, ctx, new_prefix):
+        """
+        This command is used to set a custom prefix for your server
+        It takes one argument and that is the prefix that you want to set
+
+        🔒 You will require **`administrator`** permissions to set a prefix
+        📝 Read the docs for more examples and info
+        """
         PrefixHandler.add_prefix(author=ctx.author, guild_id=ctx.guild.id, prefix=new_prefix)
         await ctx.send(
             f"<:greenTick:596576670815879169>  | the prefix for **{ctx.guild.name}** has been to set to {new_prefix}")
@@ -143,10 +160,17 @@ class Configs(commands.Cog):
     @prefix.command(name="remove", cooldown_after_parsing=True)
     @commands.check(has_perms)
     async def remove_(self, ctx):
-        PrefixHandler.remove_prefix(guild_id=ctx.guild.id)
-        await ctx.send(
-            f"<:greenTick:596576670815879169>  | the prefix for **{ctx.guild.name}** has been removed")
+        """
+        Used to remove a custom prefix of a server
+        No args are required
+        """
 
+        if PrefixHandler.has_custom_prefix(ctx.guild.id):
+            PrefixHandler.remove_prefix(guild_id=ctx.guild.id)
+            await ctx.send(
+                f"<:greenTick:596576670815879169>  | the prefix for **{ctx.guild.name}** has been removed")
+        else:
+            await ctx.send("Your server does not have a custom prefix to remove")
 
 def setup(bot):
     bot.add_cog(Configs(bot))
