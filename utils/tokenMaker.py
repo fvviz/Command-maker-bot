@@ -2,7 +2,7 @@ import pandas as pd
 import discord
 import os
 
-filepath = f"cmtokens/cmtokens.csv"
+filepath = f"data/cmtokens/cmtokens.csv"
 
 def make_csv():
     df = pd.DataFrame(columns=['memberID','tokens'])
@@ -28,14 +28,11 @@ class TokenMaker():
          id = member.id
          ids = self.df.memberID
 
-         tokens = 0
-
-
          if not id in ids.values:
              new_row = {"memberID": id,
                         "tokens": 0
                         }
-             self.df.append(new_row, ignore_index=True)
+             self.df = self.df.append(new_row, ignore_index=True)
              self.save()
              tokens = 0
          else:
@@ -63,17 +60,43 @@ class TokenMaker():
          ids = self.df.memberID
 
          if not id in ids.values:
+             print("new id")
              new_row = {"memberID": id,
                         "tokens": 1
                         }
-             self.df.append(new_row,ignore_index=True)
+             self.df = self.df.append(new_row,ignore_index=True)
              self.save()
          else:
+             print("else id")
              member_row = self.df[self.df.memberID == int(id)]
              member_row.tokens.values[0] += 1
 
              self.df[self.df.memberID == int(id)] = member_row
              self.save()
+
+     def rm_token(self):
+
+         member = self.member
+
+         id = member.id
+         ids = self.df.memberID
+
+         if not id in ids.values:
+             print("new id")
+             new_row = {"memberID": id,
+                        "tokens": 0
+                        }
+             self.df.append(new_row,ignore_index=True)
+             self.save()
+         else:
+             print("else id")
+             member_row = self.df[self.df.memberID == int(id)]
+             member_row.tokens.values[0] -= 1
+
+             self.df[self.df.memberID == int(id)] = member_row
+             self.save()
+
+
 
 
 

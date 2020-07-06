@@ -288,6 +288,8 @@ For a step by step guide on making commands
 
         if isinstance(error, commands.CommandOnCooldown):
 
+
+
             tokenmaker = TokenMaker(ctx.author)
 
             await reset_timer(ctx = ctx,command_name="make text",bot=self.bot,tokenmaker=tokenmaker,error = error,rate_limit=3)

@@ -7,7 +7,7 @@ pre_folder = "data/prefixes"
 
 def make_csv():
     df = pd.DataFrame(columns=['guildID', 'prefix', 'authorID'])
-    df.to_csv(f"{pre_folder}s/prefixes.csv", index=False)
+    df.to_csv(f"{pre_folder}/prefixes.csv", index=False)
 
 
 def get_csv():

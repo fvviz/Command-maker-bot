@@ -27,7 +27,6 @@ def make_csv(guild,type):
             columns=['name','code','authorID'])
         df.to_csv(f"{folder}/{type}/{guild}.csv", index=False)
 
-
     else:
         raise Exception("Type has to be either text, choice or embed")
 

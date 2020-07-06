@@ -7,19 +7,18 @@ import codecs
 import os
 import pathlib
 
-color_dict = {
-    "teal" : 0x1abc9c,
-    "dark teal": 0x11806a,
-    "green": 0x2ecc71,
-    "dark green":0x1f8b4c,
-    "blue": 0x3498db,
-    "dark blue": 0x9b59b6,
-    "purple":0x9b59b6,
-    "dark purple":0x71368a,
-    "magenta": 0xe91e63,
-    "dark magenta":0xad1457,
-}
 
+
+def format_date(join_date: datetime.datetime):
+    today = datetime.date.today()
+    days = join_date.date() - today
+    year = int(days.days / 365)
+    remaining_days = days.days % 25
+
+    if year == 0:
+        return f"{join_date.day} {join_date.strftime('%B')},{join_date.year}"
+
+    return f"{join_date.day} {join_date.strftime('%B')},{join_date.year}"
 
 def get_syntax(ctx,content):
 
@@ -30,10 +29,27 @@ def get_syntax(ctx,content):
         "<author-id>" : ctx.author.id,
         "<author-nick>" : ctx.author.nick,
         "<author-mention>" : ctx.author.mention,
+        "<author-created-at>" : format_date(ctx.author.created_at),
+        "<author-joined-at>" : format_date(ctx.author.joined_at),
         "<member-count>"  : ctx.guild.member_count,
         "<author-pfp>" : ctx.author.avatar_url,
         "<author-av>" : ctx.author.avatar_url,
-        "<guild-icon>" : ctx.guild.icon_url
+        "<guild-icon>" : ctx.guild.icon_url,
+        "<guild-banner>" : ctx.guild.banner_url,
+        "<guild-splash-url>" : ctx.guild.splash_url,
+        "<guild>" : ctx.guild.name,
+        "<guild-id>" : ctx.guild.id,
+        "<guild-created-at>" : ctx.guild.created_at,
+        "<guild-owner>" : ctx.guild.owner,
+        "<guild-boost-level>" : ctx.guild.premium_tier,
+        "<guild-boosts>" : ctx.guild.premium_subscription_count,
+        "<guild-boosters>" : len(ctx.guild.premium_subscribers),
+        "<guild-channels>" : len(ctx.guild.channels),
+        "<guild-voice-channels>" : len(ctx.guild.voice_channels),
+        "<guild-text-channels>" : len(ctx.guild.text_channels),
+        "<guild-emoji-limit>" : ctx.guild.emoji_limit,
+        "<guild-roles>" : len(ctx.guild.roles),
+
     }
 
 
@@ -57,16 +73,7 @@ def get_custom_prefix(ctx,PrefixHandler):
 
     return cust_prefix
 
-def format_date(join_date: datetime.datetime):
-    today = datetime.date.today()
-    days = join_date.date() - today
-    year = int(days.days / 365)
-    remaining_days = days.days % 25
 
-    if year == 0:
-        return f"{join_date.day} {join_date.strftime('%B')},{join_date.year}"
-
-    return f"{join_date.day} {join_date.strftime('%B')},{join_date.year}"
 
 async def get_last_msg_date(bot):
 
@@ -143,17 +150,6 @@ def in_img_syntax(ctx,content):
 
     return content in syntax_dict.keys()
 
-
-def does_color_exist(color):
-    if color in color_dict:
-        return True
-    else:
-        return False
-def get_color(name):
-    if name in color_dict:
-        return color_dict[name]
-    else:
-        raise Exception("color not found")
 
 def bytes_format(bytes):
     kb =  bytes/1000
@@ -402,6 +398,8 @@ def dhm(td: datetime.timedelta):
 async def reset_timer(ctx,bot : commands.Bot,command_name,tokenmaker,error,rate_limit):
     tokens = tokenmaker.tokens
 
+    print(tokens)
+
     if tokens < 1:
         await ctx.send(
             f"""
@@ -414,7 +412,7 @@ Upvote the bot to reset the timer
         await ctx.send(f"""
 
     :x: Only {rate_limit} commands can be made in an hour
-    You currently have **{tokens} token(s)** remaining , do you want spend one to reset the timer? `(y/n)`
+    You currently have **{int(tokens)} token(s)** remaining , do you want spend one to reset the timer? `(y/n)`
     *You can earn more tokens by upvoting me* use **cm-vote**
                     """)
 
@@ -438,9 +436,9 @@ Upvote the bot to reset the timer
         if input.content == "y":
             bot.get_command(command_name).reset_cooldown(ctx)
             await input.add_reaction("<:greenTick:596576670815879169>")
+            tokenmaker.rm_token()
 
         else:
-
             await input.add_reaction("❌")
 
 async def guildinfo(guild,channel):

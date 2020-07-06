@@ -6,7 +6,7 @@ from utils.prefixMaker import PrefixHandler
 from utils.helperFuncs import guildinfo
 
 prefix = "cm-"
-prefix_list = ("cm-", "<@!717062311755513976> ")
+prefix_list = (prefix, "<@!717062311755513976> ")
 
 
 async def get_pre(_, message):
