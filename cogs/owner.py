@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 from utils.tokenMaker import TokenMaker
+from utils.voteHandler import VoteHandler
 
 class BotOwner(commands.Cog):
     """Shows help for bot"""
@@ -39,12 +40,22 @@ class BotOwner(commands.Cog):
         await ctx.send(text)
 
     @commands.command(hidden = True)
+    @commands.check(is_owner)
     async def add_token(self,ctx,member : discord.Member):
 
         tm = TokenMaker(member=member)
         tm.add_token()
 
         await ctx.send("done")
+
+    @commands.command(hidden = True)
+    @commands.check(is_owner)
+    async def add_voter(self,ctx,member:discord.Member):
+
+         vh = VoteHandler(member)
+         msg = await ctx.send("ok")
+         vh.add_vote(msg.created_at)
+         await ctx.send('done')
 
 
 

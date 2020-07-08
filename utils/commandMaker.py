@@ -26,6 +26,10 @@ def make_csv(guild,type):
         df = pd.DataFrame(
             columns=['name','code','authorID'])
         df.to_csv(f"{folder}/{type}/{guild}.csv", index=False)
+    elif type == "rate":
+
+        df = pd.DataFrame(columns=['name','rate','msg','authorID'])
+        df.to_csv(f"{folder}/{type}/{guild}.csv", index=False)
 
     else:
         raise Exception("Type has to be either text, choice or embed")
@@ -60,6 +64,7 @@ class CommandMaker():
         self.choice_df = get_csv(self.guildname,"choice")
         self.embed_df = get_csv(self.guildname,"embed")
         self.ce_df = get_csv(self.guildname,"ce")
+        self.rate_df = get_csv(self.guildname,"rate")
 
         self.text_commands = self.text_df.name.tolist()
         self.choice_commands = self.choice_df.name.tolist()
@@ -198,6 +203,19 @@ class CommandMaker():
 
         else:
             raise Exception("There can't be just one choice , Provide more ")
+
+    def make_rate_command(self,name,rate,msg,author:discord.Member):
+
+        df = self.df
+
+        newRow = {'name' : name,
+                  'rate' : rate,
+                  'msg' : msg,
+                  'authorID': author.id}
+        self.df = self.df.append(newRow,ignore_index =True)
+        self.save()
+
+
 
 
     def make_embed_command(self,name,author : discord.Member,description):
@@ -345,10 +363,27 @@ class CommandMaker():
 
 
 
+    def run_rate_command(self,ctx,name):
+       df = self.df
+
+       if name in self.df.values:
+           commandRow = df[df.name == name]
+
+           rate = random.randint(0, int(commandRow.rate.values[0]))
+
+           if commandRow.msg.values[0]:
+
+                msg = str(commandRow.msg.values[0]).replace("<rate>",str(rate))
+                msg = get_syntax(ctx,msg)
+                return msg
+           else:
+                return rate
 
 
 
-    def run_choice_command(self,name):
+
+
+    def run_choice_command(self,ctx,name):
 
         df = self.df
 
@@ -357,7 +392,7 @@ class CommandMaker():
             choices = commandRow.choices.values[0]
 
             choicelist  = choices.split("/")
-            choice = random.choice(choicelist)
+            choice = get_syntax(ctx,random.choice(choicelist))
 
             return choice
         else:

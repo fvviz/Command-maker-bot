@@ -167,6 +167,7 @@ For a step by step guide on making commands
 
 
     @make.command()
+    @commands.cooldown(3, 3600, BucketType.member)
     async def embed(self,ctx,name,*,code):
 
         """
@@ -247,6 +248,78 @@ For a step by step guide on making commands
 
                             await ctx.send(embed=embed)
 
+    @make.command(cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
+    async def rate(self,ctx,name,rate,*,msg = None):
+        """
+        A rate command outputs a random rate given a given a total
+        This rate is returned in a variable **`<rate>`**
+
+        *This command takes 3 arguments*
+
+
+        [1] The **name** of the command
+
+        [2] The **total number** to pick the rate from . If 5 is provided , Then a number between 0 and 5 maybe selected
+
+        [3] The **Message** to send . This message needs to include the variable `<rate>` . All the other variables work here too, But this variable `<rate>` is compulsory, This is the number that will be selected from the total rate provided
+
+        Here is an example
+        `{prefix}make rate rate_me 5 I rate you <rate>/5`
+
+        Now a random number between 0 and 5 may be selected, Lets assume its 3
+
+        Then this outputs : `I rate you 3/10`
+
+        """
+        guild = ctx.guild
+
+        prefix = get_custom_prefix(ctx, PrefixHandler)
+
+        try:
+            pd.read_csv(f"{folder}/text/{guild.id}.csv")
+        except FileNotFoundError:
+            make_csv(guild.id, "text")
+
+        commandMaker = CommandMaker('rate', guild, self.bot)
+
+        if commandMaker.does_command_exist(name):
+            await ctx.send(":x: | A command with that name already exists")
+
+        else:
+
+            if len(name) < 12:
+                if name.startswith("@") or name.startswith("{"):
+                    await ctx.send(":x: | command names cant start with `@` or `{`")
+                else:
+
+                    if msg:
+                        if "<rate>" in msg:
+                            print("<rate>")
+
+                            msg = await commands.clean_content().convert(ctx,msg)
+
+                            print(msg)
+
+                            commandMaker.make_rate_command(name,rate,msg,ctx.author)
+
+                    
+                            await ctx.send(f"{tick} | command created")
+                    else:
+
+
+                        try:
+                            r8 = int(rate)
+
+                            msg = None
+
+                            commandMaker.make_rate_command(name, rate, msg, ctx.author)
+                            await ctx.send(f"{tick} | command created")
+
+                        except:
+
+                            await ctx.send(f"rate has to be an integer, Do {prefix}help make rate for more help")
+
     @make.error
     async def make_error(self, ctx, error):
 
@@ -312,6 +385,27 @@ For a step by step guide on making commands
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"bruh you aint even specifying {error.param}")
+
+    @rate.error
+    async def rate_error(self,ctx,error):
+
+        if isinstance(error, commands.CommandOnCooldown):
+            tokenmaker = TokenMaker(ctx.author)
+
+            await reset_timer(ctx = ctx,
+                              command_name="make text",
+                              bot = self.bot,
+                              tokenmaker=tokenmaker,
+                              error = error,
+                              rate_limit=  3)
+
+        if isinstance(error, commands.MissingRequiredArgument):
+                await ctx.send(f"{error.param} is a required argument, Please read :arrow_heading_down: ")
+                await ctx.send_help("make rate")
+
+
+
+
 
 
     @commands.group()

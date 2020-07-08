@@ -3,7 +3,7 @@ import discord
 import os
 import datetime
 
-filepath = f"data/cmtokens/cmtokens.csv"
+filepath = f"data/cmtokens/votes.csv"
 
 def make_csv():
     df = pd.DataFrame(columns=['memberID','timestamp'])
@@ -45,13 +45,14 @@ class VoteHandler():
     def add_vote(self,time : datetime.datetime):
 
         member = self.member
-        stamp = time.now()
+        stamp = datetime.datetime.timestamp(time)
 
         new_row = {"memberID": member.id,
                    "timestamp": stamp
                    }
 
         self.df = self.df.append(new_row,ignore_index = True)
+        print(self.df.head())
         self.save()
 
     def rm_vote(self):

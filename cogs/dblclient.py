@@ -135,6 +135,17 @@ and you've gained an extra token :moneybag:
         tokenmaker = TokenMaker(user)
         tokenmaker.add_token()
 
+        tc = self.bot.get_channel(730092888209227907)
+        mc = self.bot.get_channel(730093053938761799)
+
+        botinfo = await self.dblpy.get_bot_info()
+        tv = botinfo["points"]
+        mv = botinfo["monthlyPoints"]
+
+
+        await tc.edit(name=f"🗳 Total Votes : {tv}")
+        await mc.edit(name=f"❤  Monthly Votes : {mv}")
+
 
     @tasks.loop(minutes = 5)
     async def check_support(self):

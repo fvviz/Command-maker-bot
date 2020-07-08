@@ -5,7 +5,7 @@ from utils.runner import exec
 from utils.prefixMaker import PrefixHandler
 from utils.helperFuncs import guildinfo
 
-prefix = "cm-"
+prefix = "--"
 prefix_list = (prefix, "<@!717062311755513976> ")
 
 
@@ -45,9 +45,17 @@ def launchBot(bot : commands.bot):
 @bot.event
 async def on_guild_join(guild : discord.Guild):
 
+    print("joined")
+
     owner = bot.get_user(247292930346319872)
     ritsu = bot.get_user(717062311755513976)
     logchannel = bot.get_channel(712640308319617034)
+
+    sc = bot.get_channel(730072280465670175)
+    uc = bot.get_channel(730072523282317383)
+
+    await sc.edit(name=f"📈 Server Count : {len(bot.guilds)}")
+    await uc.edit(name=f"👨‍👩 User Count : {len(bot.users)}‍")
 
     embed = discord.Embed(title = "Greetings",description=f"""
 [**__Command Maker bot__**](https://docs.command-maker.ml)
@@ -80,7 +88,7 @@ To get a list of custom commands in your server,use
 Head over to the manual to see more examples
 [**`📝 Read the manual 📝`** ](https://docs.command-maker.ml/)
                         """, color = discord.Color.dark_blue())
-    embed.add_field(name=f"General information",value="**► __Bot Id__**: 717062311755513976 \n**► __Developer__** : **fwiz#6999** \n**► __Prefix__** : {prefix} ")
+    embed.add_field(name=f"General information",value=f"**► __Bot Id__**: 717062311755513976 \n**► __Developer__** : **fwiz#6999** \n**► __Prefix__** : {prefix} ")
     embed.set_thumbnail(url = ritsu.avatar_url)
 
     try:
@@ -91,6 +99,20 @@ Head over to the manual to see more examples
     await logchannel.send(f"<a:sufisheep:718395610549452901> We have officially reached our **{len(bot.guilds)}th** server <a:sufisheep:718395610549452901>")
     await guildinfo(guild,logchannel)
 
+@bot.event
+async def on_guild_remove(guild: discord.Guild):
+    print("left")
+    logchannel = bot.get_channel(712640308319617034)
+
+    sc = bot.get_channel(730072280465670175)
+    uc = bot.get_channel(730072523282317383)
+
+    await sc.edit(name = f"📈 Server Count : {len(bot.guilds)}")
+    await uc.edit(name = f"👨‍👩 User Count : {len(bot.users)}‍")
+
+    await logchannel.send(
+        f"<:cry_carson:663056511634767919> We just lost a server ; Server count -> **{len(bot.guilds)}**")
+    await guildinfo(guild, logchannel)
 
 
 @bot.event
