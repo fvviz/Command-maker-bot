@@ -479,15 +479,15 @@ async def reset_timer(ctx,bot : commands.Bot,command_name,tokenmaker,error,rate_
             f"""
 
 :x: | Only {rate_limit} commands can be made in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**
-Upvote the bot to reset the timer 
-
+Upvote the bot to reset the timer ; https://top.gg/bot/717062311755513976/vote
             """)
     else:
         await ctx.send(f"""
 
     :x: Only {rate_limit} commands can be made in an hour
     You currently have **{int(tokens)} token(s)** remaining , do you want spend one to reset the timer? `(y/n)`
-    *You can earn more tokens by upvoting me* use **cm-vote**
+    *You can earn more tokens by upvoting me (link below)
+    https://top.gg/bot/717062311755513976/vote
                     """)
 
         def check(message):
@@ -509,7 +509,7 @@ Upvote the bot to reset the timer
 
         if input.content == "y":
             bot.get_command(command_name).reset_cooldown(ctx)
-            await input.add_reaction("<:greenTick:596576670815879169>")
+            await input.add_reaction("<a:green:713431758124744714>")
             tokenmaker.rm_token()
 
         else:

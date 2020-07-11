@@ -453,9 +453,6 @@ For a step by step guide on making commands
     @edit.error
     async def edit_error(self, ctx, error):
 
-        if isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(
-                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"bruh you aint even specifying {error.param}")
@@ -514,12 +511,19 @@ For a step by step guide on making commands
             await asyncio.sleep(2)
             await msg.edit(content=f":x: | **Command does not exist**")
 
+
+
     @text_edit.error
     async def text_edit_error(self,ctx,error):
         if isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(
-                f":x: | Only 3 commands can be edited in an hour. **Try again in {str(datetime.timedelta(seconds=error.retry_after))[2:4]} minutes**")
+            tokenmaker = TokenMaker(ctx.author)
 
+            await reset_timer(ctx=ctx,
+                              command_name="edit text",
+                              bot=self.bot,
+                              tokenmaker=tokenmaker,
+                              error=error,
+                              rate_limit=3)
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"bruh you aint even specifying {error.param}")
 
@@ -590,6 +594,102 @@ For a step by step guide on making commands
             await asyncio.sleep(2)
             await ctx.send(content=f":x: | **Command does not exist**",delete_after = 2)
 
+
+
+    @embed_edit.error
+    async def embed_edit_error(self,ctx,error):
+        if isinstance(error, commands.CommandOnCooldown):
+            tokenmaker = TokenMaker(ctx.author)
+
+            await reset_timer(ctx=ctx,
+                              command_name="edit embed",
+                              bot=self.bot,
+                              tokenmaker=tokenmaker,
+                              error=error,
+                              rate_limit=3)
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error,commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
+
+    @edit.command(name = "choice",cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
+    async def _choice(self,ctx,name,choices):
+        """
+        Used to edit a choice command.
+        This command takes 2 arguments
+
+        [1] The **name** of the command
+        [2] The set to choices to use , **Note that choices must be separated by `/`**
+        """
+
+        guild = ctx.guild
+
+        try:
+            pd.read_csv(f"{folder}/choice/{guild.id}.csv")
+        except FileNotFoundError:
+            make_csv(guild=guild, type="choice")
+        commandMaker = CommandMaker("choice", guild, self.bot)
+
+        if commandMaker.custom_command_exists(name):
+            await asyncio.sleep(2)
+
+            await ctx.send(content=f"{tick} | command **{name}** exists", delete_after=2)
+
+            try:
+
+                if "/" in choices:
+                    choices = await commands.clean_content().convert(ctx, choices)
+                    print(choices)
+                    choicelist = choices.split("/")
+
+                    if len(choicelist) > 1:
+
+                        commandMaker.edit_choice_command(name, ctx.author, choices)
+                        await ctx.send(f"{tick} | command **{name}** edit")
+                    else:
+                        await ctx.send(content=f":x: | you can't just have one choice , try adding more")
+
+                else:
+                    await ctx.send(
+                        "Choices must be separated by / ,To learn more about choice commands head over to \nhttps://docs.command-maker.ml/command-types/choice-commands")
+
+
+
+            except Exception as error:
+                await asyncio.sleep(2)
+                await ctx.send(content=f":x: | **checks failed** : `{error}`")
+
+        elif commandMaker.does_command_exist(name):
+            await asyncio.sleep(2)
+            await ctx.send(content=f":x: | **Nice try , But Built-in commands cannot be edited**")
+
+        else:
+            await asyncio.sleep(2)
+            await ctx.send(content=f":x: | **Command does not exist**", delete_after=2)
+
+
+    @_choice.error
+    async def _choice_error(self,ctx,error):
+        if isinstance(error, commands.CommandOnCooldown):
+            tokenmaker = TokenMaker(ctx.author)
+
+            await reset_timer(ctx=ctx,
+                              command_name="edit choice",
+                              bot=self.bot,
+                              tokenmaker=tokenmaker,
+                              error=error,
+                              rate_limit=3)
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"bruh you aint even specifying {error.param}")
+
+        if isinstance(error,commands.CommandInvokeError):
+
+            if str(error.original) == "You are not the owner of that command":
+                await ctx.send(":x: | you don't seem to be the owner of that command")
 
 
 
