@@ -416,12 +416,11 @@ For a step by step guide on making commands
 
         """
 To edit a command,
-use {prefix}edit <command-type> <content>
+use `{prefix}edit <command-type> <name> <content>`
 
 :pencil: **__Available Command Types__**
 Click on a particular command type
 to learn more about it
-
 • [`text`](https://docs.command-maker.ml/command-types/text-commands#editing-text-commands)
 • [`choice`](https://docs.command-maker.ml/command-types/choice-commands#making-choice-commands)
 • [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
@@ -433,7 +432,7 @@ to learn more about it
                                   url = "https://docs.command-maker.ml/")
 
             embed.description = f"""To edit a command,
-use {prefix}edit <command-type> <content>
+use `{prefix}edit <command-type> <name> <content>`
 
 :pencil: **__Available Command Types__**
 Click on a particular command type 

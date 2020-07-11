@@ -254,6 +254,24 @@ class CommandMaker():
             self.save()
 
 
+    def edit_choice_command(self,name,author: discord.Member,choices):
+
+        df = self.df
+
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+            cmdRow.choices.values[0] = choices
+            self.df = df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the owner of that command")
+
+
+
+
     def edit_command(self,name,author : discord.Member,content):
 
         df = self.df
