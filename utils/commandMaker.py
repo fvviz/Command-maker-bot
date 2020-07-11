@@ -72,8 +72,7 @@ class CommandMaker():
         self.choice_commands = self.choice_df.name.tolist()
         self.embed_commands = self.embed_df.name.tolist()
         self.ce_commands = self.ce_df.name.tolist()
-
-
+        self.rate_commands = self.rate_df.name.tolist()
 
         self.type  = type
         self.df =  pd.read_csv(f"{folder}/{type}/{self.guildname}.csv")
@@ -81,7 +80,7 @@ class CommandMaker():
 
 
 
-        commandlist = self.text_commands + self.choice_commands + self.embed_commands + self.ce_commands
+        commandlist = self.text_commands + self.choice_commands + self.embed_commands + self.ce_commands + self.rate_commands
         self.commandlist = commandlist
         self.commands = ""
         for command in commandlist:
@@ -94,26 +93,12 @@ class CommandMaker():
 
     def does_command_exist(self,name):
 
-        textdf = get_csv(self.guildname,"text")
-        choicedf = get_csv(self.guildname,"choice")
-        embeddf = get_csv(self.guildname,"embed")
-        cedf = get_csv(self.guildname,"ce")
-
-
         botcommands = []
         for command in self.bot.commands:
             botcommands.append(command.name)
 
-        if name in textdf.name.values:
-            return True
 
-        elif name in choicedf.name.values:
-            return True
-
-        elif name in embeddf.name.values:
-            return True
-
-        elif name in cedf.name.values:
+        if name in self.commandlist:
             return True
 
         elif name in botcommands:
@@ -302,6 +287,29 @@ class CommandMaker():
 
         else:
             raise Exception("You are not the owner of that command")
+
+    def edit_rate_command(self,name,author: discord.Member,rate,msg):
+
+        df = self.df
+        cmdRow = df[df.name == name]
+
+        if cmdRow.authorID.values[0] == int(author.id):
+
+            if msg:
+                cmdRow.rate.values[0] = rate
+                cmdRow.msg.values[0] = msg
+            else:
+                cmdRow.rate.values[0] = rate
+
+            df[df.name == name] = cmdRow
+            self.df = df
+            self.save()
+
+        else:
+            raise Exception("You are not the owner of that command")
+
+
+
 
 
 

@@ -312,7 +312,7 @@ For a step by step guide on making commands
 
                             msg = None
 
-                            commandMaker.make_rate_command(name, rate, msg, ctx.author)
+                            commandMaker.make_rate_command(name, r8, msg, ctx.author)
                             await ctx.send(f"{tick} | command created")
 
                         except:
@@ -671,6 +671,67 @@ For a step by step guide on making commands
             await asyncio.sleep(2)
             await ctx.send(content=f":x: | **Command does not exist**", delete_after=2)
 
+    @edit.command(name="rate",cooldown_after_parsing = True)
+    @commands.cooldown(3, 3600, BucketType.member)
+    async def rate_(self,ctx,name,rate,msg=None):
+
+        guild = ctx.guild
+
+        try:
+            pd.read_csv(f"{folder}/rate/{guild.id}.csv")
+        except FileNotFoundError:
+            make_csv(guild=guild, type="rate")
+        commandMaker = CommandMaker("choice", guild, self.bot)
+
+        if commandMaker.custom_command_exists(name):
+            await asyncio.sleep(2)
+
+            await ctx.send(content=f"{tick} | command **{name}** exists", delete_after=2)
+
+            try:
+                if msg:
+                    if "<rate>" in msg:
+
+                        msg = await commands.clean_content().convert(ctx, msg)
+
+
+
+                        commandMaker.edit_rate_command(name,ctx.author, rate, msg)
+
+
+                        await ctx.send(f"{tick} | command edited")
+                    else:
+                        await ctx.send("message has to include variable **`<rate>`**")
+                else:
+
+                    try:
+                        r8 = int(rate)
+
+                        msg = None
+
+                        commandMaker.edit_rate_command(name, ctx.author, rate, msg)
+
+                        await ctx.send(f"{tick} | command edited")
+
+                    except:
+
+                        await ctx.send(f"rate has to be an integer, Do {prefix}help make rate for more help")
+
+
+
+
+
+            except Exception as error:
+                await asyncio.sleep(2)
+                await ctx.send(content=f":x: | **checks failed** : `{error}`")
+
+        elif commandMaker.does_command_exist(name):
+            await asyncio.sleep(2)
+            await ctx.send(content=f":x: | **Nice try , But Built-in commands cannot be edited**")
+
+        else:
+            await asyncio.sleep(2)
+            await ctx.send(content=f":x: | **Command does not exist**", delete_after=2)
 
     @_choice.error
     async def _choice_error(self,ctx,error):
