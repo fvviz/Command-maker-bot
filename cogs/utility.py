@@ -11,7 +11,7 @@ from utils.runner import exec
 from utils.permsHandler import PermsHandler
 
 
-tick = "<:greenTick:596576670815879169>"
+tick = "<a:green:713431758124744714>"
 
 class Utility(commands.Cog):
     def __init__(self, bot):
@@ -28,9 +28,8 @@ class Utility(commands.Cog):
 
         """
 To make a command ,
-use `cm-make <command-type><command-name>`
-(`cm-` is the universal prefix , if you have a custom prefix set up,
-That is going to work as well )
+use `{prefix}make <command-type><command-name>`
+
 
 :pencil: **__Available Command Types__**
 
@@ -97,12 +96,12 @@ For a step by step guide on making commands
                     await ctx.send(":x: | command names cant start with `@` or `<`")
                 else:
 
-                    await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** available ",delete_after = 5)
+                    await ctx.send(f"{tick} | command **{name}** available ",delete_after = 5)
                     commandMaker.create_text_command(name, ctx.author,
                                                      await commands.clean_content().convert(ctx, content))
 
 
-                    await ctx.send(content="<:greenTick:596576670815879169>  | command created ")
+                    await ctx.send(content=f"{tick}  | command created ")
 
 
             else:
@@ -145,7 +144,7 @@ For a step by step guide on making commands
                     await ctx.send(":x: | command names cant start with `@` or `<`")
                 else:
                     await asyncio.sleep(2)
-                    await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** available ")
+                    await ctx.send(f"{tick} | command **{name}** available ")
 
                     if "/" in choices:
                         choices = await commands.clean_content().convert(ctx, choices)
@@ -155,7 +154,7 @@ For a step by step guide on making commands
                         if len(choicelist) > 1:
 
                             commandMaker.make_choice_command(name, ctx.author, choices)
-                            await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** created")
+                            await ctx.send(f"{tick} | command **{name}** created")
                         else:
                             await ctx.send(content=f":x: | bruh you can't just have one choice , try adding more")
 
@@ -203,7 +202,7 @@ For a step by step guide on making commands
                     await ctx.send(":x: | command names cant start with `@` or `{`")
                 else:
 
-                        await ctx.send(f"<:greenTick:596576670815879169> | command **{name}** available ", delete_after=5)
+                        await ctx.send(f"{tick} | command **{name}** available ", delete_after=5)
 
 
                         try:
@@ -224,7 +223,7 @@ For a step by step guide on making commands
 
                             else:
                                 commandMaker.create_ce_command(name, ctx.author, code)
-                                await ctx.send(content="<:greenTick:596576670815879169>  | command created ")
+                                await ctx.send(content=f"{tick}  | command created ")
 
 
                         except ValueError:
@@ -368,7 +367,8 @@ For a step by step guide on making commands
             await reset_timer(ctx = ctx,command_name="make text",bot=self.bot,tokenmaker=tokenmaker,error = error,rate_limit=3)
 
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"bruh you aint even specifying {error.param}")
+            await ctx.send(f"{error.param} is a required argument, Please read :arrow_heading_down: ")
+            await ctx.send_help("make rate")
 
     @choice.error
     async def choice_error(self, ctx, error):
@@ -384,7 +384,9 @@ For a step by step guide on making commands
                               rate_limit=  3)
 
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"bruh you aint even specifying {error.param}")
+            await ctx.send(f"{error.param} is a required argument, Please read :arrow_heading_down: ")
+            await ctx.send_help("make rate")
+
 
     @rate.error
     async def rate_error(self,ctx,error):
@@ -393,7 +395,7 @@ For a step by step guide on making commands
             tokenmaker = TokenMaker(ctx.author)
 
             await reset_timer(ctx = ctx,
-                              command_name="make text",
+                              command_name="make rate",
                               bot = self.bot,
                               tokenmaker=tokenmaker,
                               error = error,
@@ -495,11 +497,11 @@ For a step by step guide on making commands
                 newmsg = await ctx.send("<a:loading:718075868345532466> | **running checks**")
                 commandMaker.edit_command(name, ctx.author, content)
                 await asyncio.sleep(2)
-                await newmsg.edit(content="<:greenTick:596576670815879169> | **checks completed**")
+                await newmsg.edit(content=f"{tick} | **checks completed**")
                 newmsg2 = await ctx.send(f"<a:loading:718075868345532466> | **editing command** `{name}`")
                 await asyncio.sleep(2)
                 await newmsg2.edit(
-                    content=f"<:greenTick:596576670815879169> | **command `{name}` edited successfully**")
+                    content=f"{tick} | **command `{name}` edited successfully**")
 
             except Exception as error:
                 await asyncio.sleep(2)
@@ -537,7 +539,7 @@ For a step by step guide on making commands
         1) name - the name of the command which you want to edit
         2) code - the json code of the embed
 
-        :tools:  ***Want to generate json code for your embed ? Its easy - [Click here](https://embedbuilder.nadekobot.me/)**
+        :tools:  ***Want to generate json code for your embed ? Its easy - [Click here](https://embedbuilder.nadekobot.me/)***
 
         """
 
@@ -552,7 +554,7 @@ For a step by step guide on making commands
         if commandMaker.custom_command_exists(name):
             await asyncio.sleep(2)
 
-            await ctx.send(content=f"<:greenTick:596576670815879169> | command **{name}** exists",delete_after=2)
+            await ctx.send(content=f"{tick} | command **{name}** exists",delete_after=2)
 
             try:
 
@@ -575,7 +577,7 @@ For a step by step guide on making commands
                     commandMaker.edit_ce_command(name, ctx.author, code)
 
                 await ctx.send(
-                    content=f"<:greenTick:596576670815879169> | **command `{name}` edited successfully**")
+                    content=f"{tick} | **command `{name}` edited successfully**")
 
             except Exception as error:
                 await asyncio.sleep(2)

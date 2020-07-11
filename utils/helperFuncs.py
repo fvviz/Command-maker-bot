@@ -6,6 +6,7 @@ import json
 import codecs
 import os
 import pathlib
+from discord import UserFlags , Status
 
 
 color_dict = {
@@ -21,6 +22,29 @@ color_dict = {
     "dark magenta":0xad1457,
 }
 
+badge_dict = {
+
+    UserFlags.staff : "<:staff:730489979058257951>",
+    UserFlags.partner : "<:DiscordPartner:710860869252415630>",
+    UserFlags.hypesquad : "<:hypesquad_events:585765895939424258>",
+    UserFlags.bug_hunter : "<:bughunter:585765206769139723>",
+    UserFlags.hypesquad_bravery : "<:bravery:710518487390486549>",
+    UserFlags.hypesquad_brilliance :"<:BrillianceLogo:710518070640378021>",
+    UserFlags.hypesquad_balance: "<:hsBalance:710512831463686235>",
+    UserFlags.early_supporter : "<:earlysupporter:710859759938568212>",
+    UserFlags.bug_hunter_level_2 : "<:bug2:710864460612632596>",
+    UserFlags.verified_bot : "<:verified1:730739562703224863><:verified2:730739583934791721>",
+    UserFlags.verified_bot_developer : "<:dev:710864395588206612>",
+}
+
+stat_dict = {
+    Status.offline : "<:offline2:464520569929334784>",
+    Status.online : "<:online2:464520569975603200>",
+    Status.dnd : "<:dnd2:464520569560498197>",
+    Status.idle : "🌜"
+
+}
+
 def does_color_exist(color):
     if color in color_dict:
         return True
@@ -32,12 +56,36 @@ def get_color(name):
     else:
         raise Exception("color not found")
 
+def get_status(member):
+
+    if member.status in stat_dict.keys():
+        return stat_dict[member.status]
+
+
+def get_badges(member):
+
+    badges = ""
+
+    flags  = member.public_flags.all()
+
+    for flag in flags:
+        print(flag)
+        if flag in badge_dict.keys():
+            badges += badge_dict[flag]
+
+    if member.is_avatar_animated:
+        badges += "<:nitro:710866062924709938>"
+    return badges
+
+
+
+
+
 
 def format_date(join_date: datetime.datetime):
     today = datetime.date.today()
     days = join_date.date() - today
     year = int(days.days / 365)
-    remaining_days = days.days % 25
 
     if year == 0:
         return f"{join_date.day} {join_date.strftime('%B')},{join_date.year}"
@@ -58,6 +106,8 @@ def get_syntax(ctx,content):
         "<member-count>"  : ctx.guild.member_count,
         "<author-pfp>" : ctx.author.avatar_url,
         "<author-av>" : ctx.author.avatar_url,
+        "<author-badges>" : get_badges(ctx.author),
+        "<author-status>" : get_status(ctx.author),
         "<guild-icon>" : ctx.guild.icon_url,
         "<guild-banner>" : ctx.guild.banner_url,
         "<guild-splash-url>" : ctx.guild.splash_url,

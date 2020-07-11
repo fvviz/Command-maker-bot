@@ -2,6 +2,8 @@ import pandas as pd
 import random
 from utils.helperFuncs import *
 import json
+import numpy as np
+
 
 
 folder = "data/commands"
@@ -371,13 +373,16 @@ class CommandMaker():
 
            rate = random.randint(0, int(commandRow.rate.values[0]))
 
-           if commandRow.msg.values[0]:
+           if commandRow.msg.values[0] is not np.NaN:
 
                 msg = str(commandRow.msg.values[0]).replace("<rate>",str(rate))
                 msg = get_syntax(ctx,msg)
                 return msg
            else:
                 return rate
+
+       else:
+           raise Exception("command not found")
 
 
 
