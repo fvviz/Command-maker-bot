@@ -59,7 +59,7 @@ class NewHelp(commands.HelpCommand):
 
         embed.description = f"""
 
-<:rooBless:597589960270544916> ***Invite me to your server - [Click here](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)***
+<:rempleased:730393914091241532> ***Invite me to your server - [Click here](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)***
 📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
 🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
 📰 ***Check out the latest news ({await get_last_msg_date(bot)}) - [Click here]({await get_last_msg(bot)})***
@@ -205,7 +205,7 @@ Do {prefix}help <command> for more help on a command
         cleaned_cmds = ""
 
         for subcmd in subcmds:
-            cleaned_cmds += f"`{self.clean_prefix}{subcmd}` "
+            cleaned_cmds += f"\n`{self.clean_prefix}{subcmd}` "
 
         return cleaned_cmds
 
