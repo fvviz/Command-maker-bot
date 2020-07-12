@@ -408,6 +408,8 @@ def process_embed(ctx,embed : discord.Embed,auth_dict = None,footer_dict = None)
 
     new_embed = embed
 
+
+
     try:
        new_embed.title = get_syntax(ctx,embed.title)
 
@@ -457,6 +459,20 @@ def process_embed(ctx,embed : discord.Embed,auth_dict = None,footer_dict = None)
             new_embed.set_footer(text=foot_text, icon_url=foot_icon_url)
         else:
             pass
+
+
+    if len(embed.fields) > 0:
+
+        index = 0
+        field_count = len(embed.fields)
+
+        for count in range(field_count):
+            og_field = embed.fields[index]
+            val = og_field.value
+            name = og_field.name
+
+            embed.set_field_at(index,value=get_syntax(ctx,val),name=name)
+            index += 1
 
 
 
