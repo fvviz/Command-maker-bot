@@ -5,7 +5,7 @@ from utils.runner import exec
 from utils.prefixMaker import PrefixHandler
 from utils.helperFuncs import guildinfo
 
-prefix = "--"
+prefix = "cm-"
 prefix_list = (prefix, "<@!717062311755513976> ")
 
 
