@@ -38,6 +38,7 @@ to learn more about it
 • [`text`](https://docs.command-maker.ml/command-types/text-commands)
 • [`choice`](https://docs.command-maker.ml/command-types/choice-commands)
 • [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
+• [`rate`](https://docs.command-maker.ml/command-types/embed-commands/rate-commands)
 
 """
         if ctx.invoked_subcommand is None:
@@ -51,9 +52,11 @@ use `{prefix}make <command-type><command-name>`
 
 Click on a particular command type 
 to learn more about it
+
 • [`text`](https://docs.command-maker.ml/command-types/text-commands)
 • [`choice`](https://docs.command-maker.ml/command-types/choice-commands)
 • [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
+• [`rate`](https://docs.command-maker.ml/command-types/embed-commands/rate-commands)
 
 For a step by step guide on making commands
 [`Click here`](https://docs.command-maker.ml/)
@@ -421,9 +424,10 @@ use `{prefix}edit <command-type> <name> <content>`
 :pencil: **__Available Command Types__**
 Click on a particular command type
 to learn more about it
-• [`text`](https://docs.command-maker.ml/command-types/text-commands#editing-text-commands)
-• [`choice`](https://docs.command-maker.ml/command-types/choice-commands#making-choice-commands)
+• [`text`](https://docs.command-maker.ml/command-types/text-commands)
+• [`choice`](https://docs.command-maker.ml/command-types/choice-commands)
 • [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
+• [`rate`](https://docs.command-maker.ml/command-types/embed-commands/rate-commands)
 
         """
         if ctx.invoked_subcommand is None:
@@ -438,9 +442,10 @@ use `{prefix}edit <command-type> <name> <content>`
 Click on a particular command type 
 to learn more about it
 
-• [`text`](https://docs.command-maker.ml/command-types/text-commands#editing-text-commands)
-• [`choice`](https://docs.command-maker.ml/command-types/choice-commands#making-choice-commands)
+• [`text`](https://docs.command-maker.ml/command-types/text-commands)
+• [`choice`](https://docs.command-maker.ml/command-types/choice-commands)
 • [`embed`](https://docs.command-maker.ml/command-types/embed-commands)
+• [`rate`](https://docs.command-maker.ml/command-types/embed-commands/rate-commands)
 
 For a step by step guide on making commands
 [`Click here`](https://docs.command-maker.ml/) 

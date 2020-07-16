@@ -46,11 +46,6 @@ def get_csv(guild,type):
         df = pd.read_csv(f"{folder}/{type}/{guild}.csv")
         return df
 
-
-
-
-
-
 class CommandMaker():
 
     def __init__(self,type,guild :discord.Guild,bot):

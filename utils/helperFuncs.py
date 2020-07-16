@@ -6,8 +6,7 @@ import json
 import codecs
 import os
 import pathlib
-from discord import UserFlags , Status
-
+from discord import UserFlags , Status , ActivityType
 
 color_dict = {
     "teal" : 0x1abc9c,
@@ -16,10 +15,10 @@ color_dict = {
     "dark green":0x1f8b4c,
     "blue": 0x3498db,
     "dark blue": 0x9b59b6,
-    "purple":0x9b59b6,
     "dark purple":0x71368a,
     "magenta": 0xe91e63,
     "dark magenta":0xad1457,
+    "purple":0x9b59b6,
 }
 
 badge_dict = {
@@ -42,6 +41,15 @@ stat_dict = {
     Status.online : "<:online2:464520569975603200>",
     Status.dnd : "<:dnd2:464520569560498197>",
     Status.idle : "🌜"
+
+}
+
+activity_dict = {
+    ActivityType.playing : "🎮 Playing",
+    ActivityType.listening : "🎧 Listening to",
+    ActivityType.watching : "<:system:727490483101892630> Watching",
+    ActivityType.custom : "❓"
+
 
 }
 
@@ -77,7 +85,27 @@ def get_badges(member):
         badges += "<:nitro:710866062924709938>"
     return badges
 
+def get_activity(member):
 
+    if isinstance(member.activity,discord.Spotify):
+        songname = member.activity.title
+        artists = member.activity.artists
+        artists_cleaned = ""
+
+        if len(artists) < 1:
+            artists_cleaned = member.activity.artist
+        else:
+            for artist in artists:
+                artists_cleaned += f"{artist}, "
+
+        return f"🎧 Listening to Spotify : ***{songname} - {artists_cleaned[:(len(artists_cleaned)-2)]}***"
+
+
+    elif member.activity:
+        activity_type = activity_dict[member.activity.type]
+        activity_name = member.activity.name
+
+        return f"{activity_type} **{activity_name}**"
 
 
 
@@ -103,10 +131,12 @@ def get_syntax(ctx,content):
         "<author-mention>" : ctx.author.mention,
         "<author-created-at>" : format_date(ctx.author.created_at),
         "<author-joined-at>" : format_date(ctx.author.joined_at),
-        "<member-count>"  : ctx.guild.member_count,
+        "<guild-member-count>"  : ctx.guild.member_count,
         "<author-pfp>" : ctx.author.avatar_url,
         "<author-av>" : ctx.author.avatar_url,
         "<author-badges>" : get_badges(ctx.author),
+        "<author-roles>" : len(ctx.author.roles),
+        "<author-activity>" : get_activity(ctx.author),
         "<author-status>" : get_status(ctx.author),
         "<guild-icon>" : ctx.guild.icon_url,
         "<guild-banner>" : ctx.guild.banner_url,
@@ -470,8 +500,9 @@ def process_embed(ctx,embed : discord.Embed,auth_dict = None,footer_dict = None)
             og_field = embed.fields[index]
             val = og_field.value
             name = og_field.name
+            inline = og_field.inline
 
-            embed.set_field_at(index,value=get_syntax(ctx,val),name=name)
+            embed.set_field_at(index,value=get_syntax(ctx,val),name=name,inline=inline)
             index += 1
 
 
