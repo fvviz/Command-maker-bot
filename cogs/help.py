@@ -64,10 +64,10 @@ class NewHelp(commands.HelpCommand):
 🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
 📰 ***Check out the latest news ({await get_last_msg_date(bot)}) - [Click here]({await get_last_msg(bot)})***
 
-```
-Listed below are some of the in-built commands
-Do {prefix}help <command> for more help on a command
-```
+*Listed below are some of the in-built commands*
+📘 Do **`{prefix}help <command>`** for more help on a command
+📘 Do **`{prefix}help make`** to learn about making commands 
+
                         """
 
         for cog in cogs:

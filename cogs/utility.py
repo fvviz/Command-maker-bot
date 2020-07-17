@@ -449,7 +449,6 @@ to learn more about it
 
 For a step by step guide on making commands
 [`Click here`](https://docs.command-maker.ml/) 
-
 """
             embed.set_thumbnail(url=self.bot.user.avatar_url)
             await ctx.send(embed = embed)
