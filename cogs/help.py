@@ -220,7 +220,7 @@ class NewHelp(commands.HelpCommand):
         if aliases and subcmds and not docs:
             print(1)
             return f"""
-        **Subcommands** : {subcmds}
+        **Subcommands** : \nDo **`{self.clean_prefix}<command> <subcommand>`**; Example `{self.clean_prefix}help make text`\n{subcmds}
         **Aliases**: {aliases}
 
         📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
@@ -229,7 +229,7 @@ class NewHelp(commands.HelpCommand):
         if not aliases and subcmds and not docs:
             print(2)
             return f"""
-                    **Subcommands** : {subcmds}
+                    **Subcommands** : \nDo **`{self.clean_prefix}<command> <subcommand>`**; Example `{self.clean_prefix}help make text`\n{subcmds}
 
         📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
         🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
@@ -240,7 +240,7 @@ class NewHelp(commands.HelpCommand):
 
         {docs}
         
-        **Subcommands** : {subcmds}
+        **Subcommands** : \nDo **`{self.clean_prefix}<command> <subcommand>`**; Example `{self.clean_prefix}help make text`\n{subcmds}
 
 
 
@@ -254,7 +254,8 @@ class NewHelp(commands.HelpCommand):
                     {docs}
 
                     **Aliases** : {aliases}
-                    **Subcommands** : {subcmds}
+                    **Subcommands** : \nDo **`{self.clean_prefix}<command> <subcommand>`**; Example `{self.clean_prefix}help make text`\n{subcmds}
+
 
                     📝 ***Head over to the manual to see usage examples - [Click here](https://docs.command-maker.ml/)***
                     🏘️ ***Join the support server for more help - [Click here](https://discord.gg/wrMpQVA)***
