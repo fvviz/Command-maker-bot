@@ -40,10 +40,12 @@ class Info(commands.Cog):
         commandlist2 = commandMaker.choice_commands
         commandlist3 = commandMaker.embed_commands
         commandlist4 = commandMaker.ce_commands
+        commandlist5 = commandMaker.rate_commands
 
         cmds3 = ""
         cmds2 = ""
         cmds4 = ""
+        cmds5 = ""
 
         for command in commandlist1:
             cmds1 += f"`{command}` "
@@ -56,6 +58,9 @@ class Info(commands.Cog):
 
         for command in commandlist4:
             cmds4 += f"`{command}` "
+
+        for command in commandlist5:
+            cmds5 += f"`{command}` "
 
         embed = discord.Embed(
             description=f"""
@@ -72,6 +77,9 @@ class Info(commands.Cog):
 
     **📝 Embed(v2) commands**
     {cmds4}
+
+    **📝 Rate commands**
+    {cmds5}
 
                                                """,
             color=discord.Color.dark_blue())
