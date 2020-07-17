@@ -913,21 +913,21 @@ For a step by step guide on making commands
 
                 commandMaker.delete_command(ctx.author,command)
 
-                await ctx.send("<:greenTick:596576670815879169> | deleted")
+                await ctx.send(f"{tick} | deleted")
 
             except:
 
                 try:
                     commandMaker = CommandMaker("choice", guild, self.bot)
                     commandMaker.delete_command(ctx.author, command)
-                    await ctx.send("<:greenTick:596576670815879169> | deleted")
+                    await ctx.send(f"{tick} | deleted")
                 except:
                     try:
                         commandMaker = CommandMaker("embed", guild, self.bot)
 
                         commandMaker.delete_command(ctx.author, command)
 
-                        await ctx.send("<:greenTick:596576670815879169> | deleted")
+                        await ctx.send(f"{tick} | deleted")
                     except:
 
                         try:
@@ -935,11 +935,18 @@ For a step by step guide on making commands
 
                             commandMaker.delete_command(ctx.author, command)
 
-                            await ctx.send("<:greenTick:596576670815879169> | deleted")
+                            await ctx.send(f"{tick} | deleted")
 
                         except:
 
-                            await ctx.message.add_reaction("❌")
+                            try:
+                                commandMaker = CommandMaker("rate", guild, self.bot)
+
+                                commandMaker.delete_command(ctx.author, command)
+
+                                await ctx.send(f"{tick}| deleted")
+                            except Exception as error:
+                                 await ctx.message.add_reaction(f"❌ | {error}")
 
 
 
