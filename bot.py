@@ -61,7 +61,7 @@ async def on_guild_join(guild : discord.Guild):
 [**__Command Maker bot__**](https://docs.command-maker.ml)
 [`Invite to your server`](https://discord.com/oauth2/authorize?client_id=717062311755513976&scope=bot&permissions=523336)
 
-**Command maker** is a bot with which you can make your own commands. Yes , **your own commands**
+**Command maker** is a bot with which you can make your own commands. Yes, **your own commands**
 
 The universal prefix is `{prefix}`
 However you can customize it using `cm-prefix <prefix-here>`
