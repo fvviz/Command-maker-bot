@@ -333,8 +333,6 @@ For a step by step guide on making commands
             role_name = ctx.guild.get_role(role_id).name
             await ctx.send(f"{ctx.author.mention} you are missing `{role_name}` role to make commands")
 
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"{ctx.author.mention} :danger:  **Missing Argument** {error.param}")
 
 
     @embed.error
@@ -369,9 +367,6 @@ For a step by step guide on making commands
 
             await reset_timer(ctx = ctx,command_name="make text",bot=self.bot,tokenmaker=tokenmaker,error = error,rate_limit=3)
 
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"{error.param} is a required argument, Please read :arrow_heading_down: ")
-            await ctx.send_help("make rate")
 
     @choice.error
     async def choice_error(self, ctx, error):
@@ -385,10 +380,6 @@ For a step by step guide on making commands
                               tokenmaker=tokenmaker,
                               error = error,
                               rate_limit=  3)
-
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"{error.param} is a required argument, Please read :arrow_heading_down: ")
-            await ctx.send_help("make rate")
 
 
     @rate.error
@@ -404,9 +395,7 @@ For a step by step guide on making commands
                               error = error,
                               rate_limit=  3)
 
-        if isinstance(error, commands.MissingRequiredArgument):
-                await ctx.send(f"{error.param} is a required argument, Please read :arrow_heading_down: ")
-                await ctx.send_help("make rate")
+
 
 
 
@@ -528,8 +517,6 @@ For a step by step guide on making commands
                               tokenmaker=tokenmaker,
                               error=error,
                               rate_limit=3)
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"bruh you aint even specifying {error.param}")
 
         if isinstance(error,commands.CommandInvokeError):
 
@@ -611,13 +598,7 @@ For a step by step guide on making commands
                               tokenmaker=tokenmaker,
                               error=error,
                               rate_limit=3)
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"bruh you aint even specifying {error.param}")
 
-        if isinstance(error,commands.CommandInvokeError):
-
-            if str(error.original) == "You are not the owner of that command":
-                await ctx.send(":x: | you don't seem to be the owner of that command")
 
     @edit.command(name = "choice",cooldown_after_parsing = True)
     @commands.cooldown(3, 3600, BucketType.member)
@@ -748,13 +729,24 @@ For a step by step guide on making commands
                               tokenmaker=tokenmaker,
                               error=error,
                               rate_limit=3)
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f"bruh you aint even specifying {error.param}")
 
         if isinstance(error,commands.CommandInvokeError):
 
             if str(error.original) == "You are not the owner of that command":
                 await ctx.send(":x: | you don't seem to be the owner of that command")
+
+    @rate_.error
+    async def rate__error(self,ctx,error):
+        if isinstance(error, commands.CommandOnCooldown):
+            tokenmaker = TokenMaker(ctx.author)
+
+            await reset_timer(ctx=ctx,
+                              command_name="edit choice",
+                              bot=self.bot,
+                              tokenmaker=tokenmaker,
+                              error=error,
+                              rate_limit=3)
+
 
 
 

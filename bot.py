@@ -125,8 +125,10 @@ async def on_command_error(ctx,error):
         command = ctx.invoked_with
 
         await exec(ctx = ctx,name=command,bot=bot)
-
-
+    elif isinstance(error,commands.MissingRequiredArgument):
+        command = ctx.invoked_with
+        await ctx.send(f":x: | **{error.param}** Is a required argument that is missing, Please read 👇")
+        await ctx.send_help(ctx.command)
     else:
         pass
 
